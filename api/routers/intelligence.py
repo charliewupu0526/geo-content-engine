@@ -44,42 +44,18 @@ async def analyze_company(request: AnalyzeCompanyRequest):
     if not scrape_result["success"]:
         raise HTTPException(status_code=400, detail=f"Failed to scrape URL: {scrape_result['error']}")
     
-    # Step 2: Extract company info using AI
-    content = scrape_result["data"].get("markdown", "")
-    
-    company_schema = {
-        "type": "object",
-        "properties": {
-            "company_name": {"type": "string"},
-            "industry": {"type": "string"},
-            "products_services": {
-                "type": "array",
-                "items": {"type": "string"}
-            },
-            "target_audience": {"type": "string"},
-            "unique_selling_points": {
-                "type": "array",
-                "items": {"type": "string"}
-            },
-            "key_features": {
-                "type": "array",
-                "items": {"type": "string"}
-            }
-        }
-    }
-    
-    # Use Firecrawl's AI extraction or fall back to Gemini
-    extract_result = await firecrawl.extract_structured(
-        request.url,
-        company_schema,
-        "Extract company information including products, target audience, and unique selling points"
-    )
-    
-    if extract_result["success"]:
-        company_data = extract_result["data"]
+    # Step 2: Get markdown content
+    data = scrape_result.get("data", {})
+    if isinstance(data, dict):
+        content = data.get("markdown", "")
     else:
-        # Fallback: Use Gemini to analyze the scraped content
-        company_data = await gemini.analyze_company_content(content, request.company_name)
+        content = getattr(data, 'markdown', '') if data else ""
+    
+    if not content:
+        raise HTTPException(status_code=400, detail="No content extracted from URL")
+    
+    # Step 3: Use OpenAI to analyze the scraped content
+    company_data = await gemini.analyze_company_content(content, request.company_name)
     
     return {
         "success": True,
