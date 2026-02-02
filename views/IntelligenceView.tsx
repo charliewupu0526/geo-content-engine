@@ -291,6 +291,21 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
         ) : (
           /* 步骤 2：结果展示 */
           <div className="animate-in fade-in slide-in-from-right-4 duration-500 space-y-10 pb-12">
+
+            {/* 错误提示横幅 */}
+            {scanError && (
+              <div className="bg-red-50 border border-red-200 rounded-[2rem] p-8 flex items-start gap-4 animate-pulse">
+                <div className="p-3 bg-red-100 text-red-600 rounded-xl">
+                  <AlertCircle size={28} />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-black text-red-800 mb-2">分析服务响应异常</h3>
+                  <p className="text-red-700 font-medium">{scanError}</p>
+                  <p className="text-xs text-red-500 mt-2 font-mono bg-white/50 p-2 rounded-lg">建议检查: Vercel 环境变量 (OPENAI_API_KEY) 是否配置正确且额度充足。</p>
+                </div>
+              </div>
+            )}
+
             <div className="bg-white border border-slate-200 rounded-[3rem] p-12 shadow-sm">
               <div className="flex items-center gap-4 mb-12">
                 <div className="p-4 bg-green-50 text-green-600 rounded-2xl shadow-inner">
