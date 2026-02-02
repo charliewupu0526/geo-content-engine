@@ -8,13 +8,13 @@ import json
 from api.config import get_settings
 
 class OpenAIService:
-    """Service wrapper for OpenAI GPT-5 API"""
+    """Service wrapper for OpenAI API"""
     
     def __init__(self):
         settings = get_settings()
         self.client = OpenAI(api_key=settings.openai_api_key)
-        self.model = "gpt-5"  # GPT-5 模型
-        self.fast_model = "gpt-5-turbo"  # 快速版本用于简单任务
+        self.model = "gpt-4o"  # 使用 GPT-4o 模型
+        self.fast_model = "gpt-4o-mini"  # 快速版本用于简单任务
     
     async def analyze_company_content(
         self, 
