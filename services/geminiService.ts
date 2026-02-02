@@ -36,13 +36,23 @@ export const MOCK_KEYWORDS = [
 export const analyzeCompanyWebsite = async (url: string, companyName?: string) => {
   try {
     const result = await apiClient.analyzeCompany(url, companyName);
-    if (result.success && result.data) {
+
+    // 如果请求成功且数据中没有业务逻辑错误
+    if (result.success && result.data && !result.data.error) {
       return result.data;
     }
-    throw new Error(result.error || 'Failed to analyze company');
+
+    // 返回具体错误信息
+    const errorMessage = result.data?.error || result.error || 'Failed to analyze company';
+    console.error('API Error:', errorMessage);
+
+    // 返回包含错误的完整对象，以便 UI 显示
+    if (result.data) return result.data;
+    return { error: errorMessage, success: false };
+
   } catch (error) {
     console.error('Failed to analyze company:', error);
-    return null;
+    return { error: error instanceof Error ? error.message : 'Network error', success: false };
   }
 };
 

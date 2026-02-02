@@ -12,9 +12,18 @@ class OpenAIService:
     
     def __init__(self):
         settings = get_settings()
-        self.client = OpenAI(api_key=settings.openai_api_key)
-        self.model = "gpt-4o"  # 使用 GPT-4o 模型
-        self.fast_model = "gpt-4o-mini"  # 快速版本用于简单任务
+        self.api_key = settings.openai_api_key
+        self.client = OpenAI(api_key=self.api_key)
+        # 使用 gpt-4o-mini 因为它更快、更便宜且不仅限于 Tier 1+ 用户
+        self.model = "gpt-4o-mini"  
+        self.fast_model = "gpt-4o-mini"
+        
+        # Debug: 打印 Key 信息到日志 (仅前几位)
+        if self.api_key:
+            mask_key = f"{self.api_key[:8]}...{self.api_key[-4:]}"
+            print(f"OpenAI Service initialized with Key: {mask_key}")
+        else:
+            print("OpenAI Service initialized WITHOUT API Key")
     
     async def analyze_company_content(
         self, 

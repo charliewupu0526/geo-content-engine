@@ -39,30 +39,76 @@ async def analyze_company(request: AnalyzeCompanyRequest):
     firecrawl = get_firecrawl_service()
     gemini = get_gemini_service()
     
-    # Step 1: Scrape the website
-    scrape_result = await firecrawl.scrape_url(request.url, ["markdown"])
-    if not scrape_result["success"]:
-        raise HTTPException(status_code=400, detail=f"Failed to scrape URL: {scrape_result['error']}")
-    
-    # Step 2: Get markdown content
-    data = scrape_result.get("data", {})
-    if isinstance(data, dict):
-        content = data.get("markdown", "")
-    else:
-        content = getattr(data, 'markdown', '') if data else ""
-    
-    if not content:
-        raise HTTPException(status_code=400, detail="No content extracted from URL")
-    
-    # Step 3: Use OpenAI to analyze the scraped content
-    company_data = await gemini.analyze_company_content(content, request.company_name)
-    
-    return {
-        "success": True,
-        "url": request.url,
-        "company_profile": company_data,
-        "scraped_content_preview": content[:1000] if content else None
-    }
+    try:
+        # Step 1: Scrape the website
+        print(f"Scraping URL: {request.url}")
+        scrape_result = await firecrawl.scrape_url(request.url, ["markdown"])
+        
+        if not scrape_result["success"]:
+            # 如果爬虫失败，尝试直接用 OpenAI 生成（如果提供了公司名）
+            print(f"Scrape failed: {scrape_result.get('error')}")
+            if request.company_name:
+                print("Falling back to AI generation without content")
+                company_data = await gemini.generate_company_profile(
+                    request.company_name, 
+                    request.url
+                )
+                return {
+                    "success": True,
+                    "url": request.url,
+                    "company_profile": company_data.get("profile_text", ""),
+                    "note": f"Scrape failed ({scrape_result.get('error')}), generated using company name only."
+                }
+            else:
+                return {
+                    "success": False,
+                    "error": f"Scrape failed: {scrape_result.get('error')}"
+                }
+        
+        # Step 2: Get markdown content
+        data = scrape_result.get("data", {})
+        if isinstance(data, dict):
+            content = data.get("markdown", "")
+        else:
+            content = getattr(data, 'markdown', '') if data else ""
+        
+        if not content:
+            # 内容为空也尝试降级
+            if request.company_name:
+                 company_data = await gemini.generate_company_profile(request.company_name, request.url)
+                 return {
+                    "success": True,
+                    "company_profile": company_data.get("profile_text", ""),
+                    "note": "No content extracted, generated using company name."
+                }
+            return {"success": False, "error": "No content extracted from URL"}
+        
+        # Step 3: Use OpenAI to analyze the scraped content
+        print(f"Analyzing content length: {len(content)}")
+        company_data = await gemini.analyze_company_content(content, request.company_name)
+        
+        # 检查是否返回了错误
+        if "error" in company_data:
+            return {
+                "success": False, 
+                "error": f"OpenAI Error: {company_data['error']}",
+                "raw_error": str(company_data)
+            }
+        
+        return {
+            "success": True,
+            "url": request.url,
+            "company_profile": company_data,
+            "scraped_content_preview": content[:1000] if content else None
+        }
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": f"Server Exception: {str(e)}"
+        }
 
 
 @router.post("/analyze-competitor")

@@ -146,6 +146,22 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
         activeProject.name
       );
 
+      // 检查 API 返回的错误
+      if (analysis && (analysis.error || analysis.success === false)) {
+        const errorMsg = analysis.error || 'Unknown API Error';
+        console.error("API returned error:", errorMsg);
+        setScanError(`API 错误: ${JSON.stringify(errorMsg)}`);
+
+        // 如果是 401 错误，给予明确提示
+        if (JSON.stringify(errorMsg).includes('401') || JSON.stringify(errorMsg).includes('invalid_api_key')) {
+          setScanError('OpenAI API Key 无效。请检查 Vercel 环境变量配置。');
+        }
+
+        setSubStep('results');
+        setScanProgress('');
+        return;
+      }
+
       if (analysis) {
         setScanProgress('正在生成企业画像...');
         // Step 2: Generate profile using AI
@@ -162,8 +178,9 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
         setAnalysisResult(analysis);
         setScanProgress('分析完成!');
       } else {
-        // Use mock data if API fails
-        setScanProgress('使用缓存数据...');
+        // Network failure or complete crash
+        setScanError('无法连接到分析服务，请检查网络');
+        setSubStep('results');
       }
 
       setSubStep('results');
