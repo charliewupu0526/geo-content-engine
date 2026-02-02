@@ -49,15 +49,63 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
     checkApi();
   }, []);
 
-  // 初始化企业背景
+  // 初始化 - 自动调用 AI 生成企业画像
   useEffect(() => {
-    if (activeProject) {
-      setProfileText(`[深度企业画像与 GEO 战略对齐报告]
+    if (activeProject && apiStatus === 'online') {
+      const generateInitialProfile = async () => {
+        setScanProgress('正在使用 AI 分析企业信息...');
+        setIsScanning(true);
+
+        try {
+          // 先爬取网站内容
+          const analysis = await analyzeCompanyWebsite(
+            `https://${activeProject.domain}`,
+            activeProject.name
+          );
+
+          if (analysis) {
+            // 用 AI 生成画像
+            const profile = await generateCompanyProfile(
+              activeProject.name,
+              activeProject.domain,
+              analysis
+            );
+
+            if (profile && profile.profile) {
+              setProfileText(profile.profile);
+              setAnalysisResult(analysis);
+              setScanProgress('AI 画像生成完成');
+            } else {
+              // 使用默认模板
+              setProfileText(getDefaultProfileTemplate(activeProject));
+            }
+          } else {
+            setProfileText(getDefaultProfileTemplate(activeProject));
+          }
+        } catch (error) {
+          console.error('Failed to generate profile:', error);
+          setScanError('AI 生成失败，使用默认模板');
+          setProfileText(getDefaultProfileTemplate(activeProject));
+        } finally {
+          setIsScanning(false);
+          setScanProgress('');
+        }
+      };
+
+      generateInitialProfile();
+    } else if (activeProject && apiStatus === 'offline') {
+      // API 离线时使用默认模板
+      setProfileText(getDefaultProfileTemplate(activeProject));
+    }
+  }, [activeProject, apiStatus]);
+
+  // 默认画像模板
+  const getDefaultProfileTemplate = (project: Project) => `[深度企业画像与 GEO 战略对齐报告]
 
 1. 品牌核心定位 (Brand Positioning)
-- 品牌名称：${activeProject.name}
-- 官方域名：${activeProject.domain}
-- 核心愿景：致力于通过 AI 技术解决 ${activeProject.name} 领域的内容生产与流量分发痛点。
+- 品牌名称：${project.name}
+- 官方域名：${project.domain}
+- 核心愿景：致力于通过 AI 技术解决 ${project.name} 领域的内容生产与流量分发痛点。
 - 品牌语调：专业、前瞻、可靠（适合金融/技术类 AI 模型抓取）。
 
 2. 核心产品/服务矩阵 (Product Matrix)
@@ -78,11 +126,10 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
 
 5. GEO 策略偏好 (Strategy Markers)
 - 结构化偏好：倾向于使用 Markdown 表格、FAQ 组件和专家引文 (E-E-A-T)。
-- 引用权重建议：加强关于“技术白皮书”和“数据调研报告”的内容产出，这是当前赛道高引用的主要因素。
+- 引用权重建议：加强关于"技术白皮书"和"数据调研报告"的内容产出，这是当前赛道高引用的主要因素。
 
-当前状态：画像已就绪，等待执行全网竞品引用拓扑扫描。`);
-    }
-  }, [activeProject]);
+⚠️ 注意：当前使用离线模板。请确保 API 配置正确以获取 AI 实时分析。`;
+
 
   const handleStartScan = async () => {
     if (!activeProject) return;
