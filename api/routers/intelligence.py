@@ -53,6 +53,14 @@ async def analyze_company(request: AnalyzeCompanyRequest):
                     request.company_name, 
                     request.url
                 )
+                
+                # Check for error in fallback generation
+                if "error" in company_data:
+                    return {
+                        "success": False,
+                        "error": f"Scrape failed ({scrape_result.get('error')}) and AI generation failed: {company_data['error']}"
+                    }
+                    
                 return {
                     "success": True,
                     "url": request.url,
@@ -76,6 +84,14 @@ async def analyze_company(request: AnalyzeCompanyRequest):
             # 内容为空也尝试降级
             if request.company_name:
                  company_data = await gemini.generate_company_profile(request.company_name, request.url)
+                 
+                 # Check for error in fallback generation
+                 if "error" in company_data:
+                    return {
+                        "success": False,
+                        "error": f"No content extracted and AI generation failed: {company_data['error']}"
+                    }
+                 
                  return {
                     "success": True,
                     "company_profile": company_data.get("profile_text", ""),
