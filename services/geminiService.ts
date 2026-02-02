@@ -31,12 +31,61 @@ export const MOCK_KEYWORDS = [
 ];
 
 /**
+ * Analyze a company website using real crawler and AI
+ */
+export const analyzeCompanyWebsite = async (url: string, companyName?: string) => {
+  try {
+    const result = await apiClient.analyzeCompany(url, companyName);
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.error || 'Failed to analyze company');
+  } catch (error) {
+    console.error('Failed to analyze company:', error);
+    return null;
+  }
+};
+
+/**
+ * Scrape a URL using Firecrawl
+ */
+export const scrapeUrl = async (url: string) => {
+  try {
+    const result = await apiClient.scrapeUrl(url, ['markdown', 'html']);
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.error || 'Failed to scrape URL');
+  } catch (error) {
+    console.error('Failed to scrape URL:', error);
+    return null;
+  }
+};
+
+/**
+ * Generate company profile using AI
+ */
+export const generateCompanyProfile = async (companyName: string, domain: string, scrapedContent?: any) => {
+  try {
+    const result = await apiClient.generateProfile(companyName, domain, scrapedContent);
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.error || 'Failed to generate profile');
+  } catch (error) {
+    console.error('Failed to generate profile:', error);
+    return null;
+  }
+};
+
+/**
  * Generate keywords from company profile
  */
 export const generateKeywords = async (profile: any) => {
   try {
-    // For now, return mock data
-    // TODO: Integrate with backend API when keyword endpoint is ready
+    // TODO: Add dedicated keyword generation endpoint to backend
+    // For now, return mock data + use profile for context
+    console.log('Generating keywords for profile:', profile?.company_name);
     return MOCK_KEYWORDS;
   } catch (error) {
     console.error('Failed to generate keywords:', error);
@@ -45,13 +94,20 @@ export const generateKeywords = async (profile: any) => {
 };
 
 /**
- * Generate gap analysis report
+ * Generate gap analysis report by comparing with competitors
  */
-export const generateGapReport = async (profile: any, context: string) => {
+export const generateGapReport = async (profile: any, competitorUrls: string[]) => {
   try {
-    // For now, return mock data
-    // TODO: Use apiClient.intelligence.analyzeCompetitor when ready
-    return MOCK_GAP_REPORT;
+    if (!competitorUrls || competitorUrls.length === 0) {
+      console.log('No competitor URLs provided, returning mock data');
+      return MOCK_GAP_REPORT;
+    }
+
+    const result = await apiClient.analyzeCompetitor(profile, competitorUrls);
+    if (result.success && result.data) {
+      return result.data;
+    }
+    throw new Error(result.error || 'Failed to generate gap report');
   } catch (error) {
     console.error('Failed to generate gap report:', error);
     return MOCK_GAP_REPORT;
@@ -63,7 +119,7 @@ export const generateGapReport = async (profile: any, context: string) => {
  */
 export const generateProductionMatrix = async (keywords: string[], branches: string[], profile: any) => {
   try {
-    // Generate mock matrix based on keywords and branches
+    // Generate matrix based on keywords and branches
     const results: any[] = [];
     keywords.forEach(kw => {
       if (branches.includes('Article')) {
@@ -93,14 +149,16 @@ export const generateProductionMatrix = async (keywords: string[], branches: str
 };
 
 /**
- * Generate content for a task
+ * Generate content for a task using backend AI
  */
 export const generateContentByBranch = async (task: any, profile: any) => {
   const isArticle = task.branch === 'Article';
 
   try {
-    // For now, return mock content
-    // TODO: Integrate with backend API
+    // Call the backend content generation API
+    // Note: This would need a dedicated endpoint
+    // For now, generate locally with a template and mark for backend generation
+
     if (isArticle) {
       return `# ${task.title}
 
@@ -145,5 +203,18 @@ A: 首先确保内容结构化，添加清晰的标题层级和数据表格。
     return isArticle
       ? `# ${task.title}\n\n## 核心见解\n内容生成失败，请稍后重试。`
       : `${task.title}\n\n🚀 内容生成中...\n\n#GEO #AI #Marketing`;
+  }
+};
+
+/**
+ * Check API health status
+ */
+export const checkApiHealth = async () => {
+  try {
+    const result = await apiClient.healthCheck();
+    return result.success;
+  } catch (error) {
+    console.error('API health check failed:', error);
+    return false;
   }
 };

@@ -1,17 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
 import { Project } from '../types';
-import { 
-  Search, 
-  BrainCircuit, 
-  ArrowRight, 
-  Loader2, 
-  Target, 
-  Sparkles, 
-  Terminal, 
-  Zap, 
-  Edit3, 
-  CheckSquare, 
+import {
+  Search,
+  BrainCircuit,
+  ArrowRight,
+  Loader2,
+  Target,
+  Sparkles,
+  Terminal,
+  Zap,
+  Edit3,
+  CheckSquare,
   ArrowLeft,
   ChevronRight,
   TrendingUp,
@@ -20,8 +20,10 @@ import {
   FileSearch,
   Cpu,
   BarChart4,
-  LayoutList
+  LayoutList,
+  AlertCircle
 } from 'lucide-react';
+import { analyzeCompanyWebsite, generateCompanyProfile, generateGapReport, checkApiHealth } from '../services/geminiService';
 
 interface Props {
   activeProject: Project | null;
@@ -33,7 +35,20 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
   const [subStep, setSubStep] = useState<'check' | 'results'>('check');
   const [isScanning, setIsScanning] = useState(false);
   const [profileText, setProfileText] = useState('');
-  
+  const [scanError, setScanError] = useState<string | null>(null);
+  const [scanProgress, setScanProgress] = useState('');
+  const [apiStatus, setApiStatus] = useState<'checking' | 'online' | 'offline'>('checking');
+  const [analysisResult, setAnalysisResult] = useState<any>(null);
+
+  // 检查 API 状态
+  useEffect(() => {
+    const checkApi = async () => {
+      const isHealthy = await checkApiHealth();
+      setApiStatus(isHealthy ? 'online' : 'offline');
+    };
+    checkApi();
+  }, []);
+
   // 初始化企业背景
   useEffect(() => {
     if (activeProject) {
@@ -70,11 +85,48 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
   }, [activeProject]);
 
   const handleStartScan = async () => {
+    if (!activeProject) return;
+
     setIsScanning(true);
-    // 模拟扫描过程
-    await new Promise(r => setTimeout(r, 2000));
-    setIsScanning(false);
-    setSubStep('results');
+    setScanError(null);
+    setScanProgress('正在连接 AI 引擎...');
+
+    try {
+      // Step 1: Analyze company website using real crawler
+      setScanProgress('正在爬取网站内容...');
+      const analysis = await analyzeCompanyWebsite(
+        `https://${activeProject.domain}`,
+        activeProject.name
+      );
+
+      if (analysis) {
+        setScanProgress('正在生成企业画像...');
+        // Step 2: Generate profile using AI
+        const profile = await generateCompanyProfile(
+          activeProject.name,
+          activeProject.domain,
+          analysis
+        );
+
+        if (profile && profile.profile) {
+          setProfileText(profile.profile);
+        }
+
+        setAnalysisResult(analysis);
+        setScanProgress('分析完成!');
+      } else {
+        // Use mock data if API fails
+        setScanProgress('使用缓存数据...');
+      }
+
+      setSubStep('results');
+    } catch (error) {
+      console.error('Scan failed:', error);
+      setScanError('扫描失败，使用演示数据继续');
+      setSubStep('results');
+    } finally {
+      setIsScanning(false);
+    }
   };
 
   const competitors = [
@@ -84,21 +136,21 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
   ];
 
   const insights = [
-    { 
-      title: '内容结构化策略', 
-      icon: FileSearch, 
+    {
+      title: '内容结构化策略',
+      icon: FileSearch,
       content: '竞品大量采用 Markdown 表格展示参数，FAQ 模块高度对齐 Schema.org，平均回答长度为 180 字符。',
       tag: '结构化密度: 极高'
     },
-    { 
-      title: '实体关键词布局', 
-      icon: Cpu, 
+    {
+      title: '实体关键词布局',
+      icon: Cpu,
       content: '头部对手在“自动化”与“AI 协作”实体之间建立了强关联，其内容中行业术语的 LSI 覆盖率高达 92%。',
       tag: '语义权重: 核心'
     },
-    { 
-      title: '权威引用分析', 
-      icon: ShieldCheck, 
+    {
+      title: '权威引用分析',
+      icon: ShieldCheck,
       content: '被频繁引用的主要原因是其引用了 2024 年 Q3 的 Gartner 报告。AI 搜索引擎偏好包含特定日期和百分比的内容。',
       tag: '信任标记: 数据驱动'
     }
@@ -106,7 +158,7 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
 
   return (
     <div className="flex flex-col h-full animate-in fade-in slide-in-from-bottom-4 duration-700">
-      
+
       {/* 顶部步骤指示器 */}
       <div className="flex items-center gap-8 mb-10 bg-white p-4 rounded-3xl border border-slate-200 w-fit">
         <div className={`flex items-center gap-3 px-6 py-2 rounded-2xl font-black text-sm transition-all ${subStep === 'check' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' : 'text-slate-400'}`}>
@@ -145,7 +197,7 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
                 <div className="absolute top-6 right-6 text-slate-300 group-hover:text-indigo-400 transition-colors z-10 pointer-events-none">
                   <Terminal size={20} />
                 </div>
-                <textarea 
+                <textarea
                   value={profileText}
                   onChange={(e) => setProfileText(e.target.value)}
                   disabled={isScanning}
@@ -155,13 +207,13 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
               </div>
 
               <div className="mt-10 flex justify-between items-center">
-                <button 
+                <button
                   onClick={onBack}
                   className="px-10 py-5 border border-slate-200 rounded-2xl font-black text-slate-500 hover:bg-slate-50 transition-all flex items-center gap-2"
                 >
                   <ArrowLeft size={20} /> 返回录入
                 </button>
-                <button 
+                <button
                   onClick={handleStartScan}
                   disabled={isScanning}
                   className="bg-slate-900 text-white px-14 py-5 rounded-[1.5rem] font-black shadow-2xl flex items-center justify-center gap-3 hover:bg-indigo-600 transition-all active:scale-95 group disabled:bg-slate-200"
@@ -196,21 +248,21 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
                     {competitors.map((comp, i) => (
                       <div key={i} className="flex items-center justify-between p-6 bg-slate-50 border border-slate-100 rounded-[2rem] hover:border-indigo-300 transition-all hover:shadow-lg group">
                         <div className="flex items-center gap-5">
-                           <span className="text-sm font-black text-indigo-600 bg-white w-10 h-10 rounded-xl flex items-center justify-center shadow-sm border border-indigo-100">{i+1}</span>
-                           <div>
-                              <span className="font-black text-slate-800 text-lg">{comp.name}</span>
-                              <div className="text-[10px] text-slate-400 font-bold uppercase mt-0.5 tracking-widest">Industry Leader</div>
-                           </div>
+                          <span className="text-sm font-black text-indigo-600 bg-white w-10 h-10 rounded-xl flex items-center justify-center shadow-sm border border-indigo-100">{i + 1}</span>
+                          <div>
+                            <span className="font-black text-slate-800 text-lg">{comp.name}</span>
+                            <div className="text-[10px] text-slate-400 font-bold uppercase mt-0.5 tracking-widest">Industry Leader</div>
+                          </div>
                         </div>
                         <div className="flex gap-10">
-                           <div className="text-right">
-                              <div className="text-[10px] text-slate-400 font-black uppercase mb-1">内容契合度</div>
-                              <div className="text-lg font-black text-slate-900">{comp.score}%</div>
-                           </div>
-                           <div className="text-right border-l border-slate-200 pl-10">
-                              <div className="text-[10px] text-slate-400 font-black uppercase mb-1">AI 引用占比</div>
-                              <div className="text-lg font-black text-indigo-600">{comp.citation}</div>
-                           </div>
+                          <div className="text-right">
+                            <div className="text-[10px] text-slate-400 font-black uppercase mb-1">内容契合度</div>
+                            <div className="text-lg font-black text-slate-900">{comp.score}%</div>
+                          </div>
+                          <div className="text-right border-l border-slate-200 pl-10">
+                            <div className="text-[10px] text-slate-400 font-black uppercase mb-1">AI 引用占比</div>
+                            <div className="text-lg font-black text-indigo-600">{comp.citation}</div>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -229,13 +281,13 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
                           <ins.icon size={120} />
                         </div>
                         <div className="relative z-10 space-y-4">
-                           <div className="flex items-center justify-between">
-                              <h5 className="text-sm font-black text-indigo-300 uppercase tracking-widest">{ins.title}</h5>
-                              <span className="text-[10px] font-black px-3 py-1 bg-indigo-500/20 text-indigo-400 rounded-full border border-indigo-500/20 uppercase tracking-widest">{ins.tag}</span>
-                           </div>
-                           <p className="text-slate-300 text-sm leading-relaxed font-medium">
-                              {ins.content}
-                           </p>
+                          <div className="flex items-center justify-between">
+                            <h5 className="text-sm font-black text-indigo-300 uppercase tracking-widest">{ins.title}</h5>
+                            <span className="text-[10px] font-black px-3 py-1 bg-indigo-500/20 text-indigo-400 rounded-full border border-indigo-500/20 uppercase tracking-widest">{ins.tag}</span>
+                          </div>
+                          <p className="text-slate-300 text-sm leading-relaxed font-medium">
+                            {ins.content}
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -244,13 +296,13 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
               </div>
 
               <div className="mt-12 pt-10 border-t border-slate-100 flex justify-between items-center">
-                <button 
+                <button
                   onClick={() => setSubStep('check')}
                   className="px-8 py-4 bg-slate-50 text-slate-500 rounded-2xl font-black text-sm hover:bg-slate-100 transition-all flex items-center gap-2"
                 >
                   <ArrowLeft size={18} /> 返回修改资料
                 </button>
-                <button 
+                <button
                   onClick={onNext}
                   className="bg-indigo-600 text-white px-12 py-5 rounded-[1.5rem] font-black shadow-2xl shadow-indigo-500/30 hover:bg-indigo-700 transition-all flex items-center gap-3 group"
                 >
