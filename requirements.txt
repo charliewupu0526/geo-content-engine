@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+firecrawl-py
+supabase
+openai
+pydantic
+python-dotenv
+pydantic-settings
