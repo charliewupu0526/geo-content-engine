@@ -240,6 +240,24 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
         {subStep === 'check' ? (
           /* 步骤 1：资料检查 */
           <div className="animate-in fade-in slide-in-from-left-4 duration-500 h-full flex flex-col">
+
+            {/* 错误提示横幅 (Step 1) */}
+            {scanError && (
+              <div className="mb-6 bg-red-50 border border-red-200 rounded-[2rem] p-6 flex items-start gap-4 animate-pulse">
+                <div className="p-2 bg-red-100 text-red-600 rounded-xl">
+                  <AlertCircle size={24} />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-base font-black text-red-800 mb-1">自动生成失败</h3>
+                  <p className="text-sm text-red-700">{scanError}</p>
+                  {/* 额外提示: 如果是 401 */}
+                  {(scanError.includes('401') || scanError.includes('key')) && (
+                    <p className="text-xs text-red-600 mt-2 font-bold">👉 请检查 Vercel 环境变量 OPENAI_API_KEY</p>
+                  )}
+                </div>
+              </div>
+            )}
+
             <div className="bg-white border border-slate-200 rounded-[3rem] p-12 shadow-sm flex flex-col flex-1">
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
