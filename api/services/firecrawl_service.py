@@ -29,9 +29,8 @@ class FirecrawlService:
             Scraped content with metadata
         """
         try:
-            result = self.app.scrape_url(url, params={
-                "formats": formats
-            })
+            # Firecrawl SDK uses scrape() not scrape_url()
+            result = self.app.scrape(url, formats=formats)
             return {
                 "success": True,
                 "url": url,
@@ -64,23 +63,17 @@ class FirecrawlService:
             Crawled pages data
         """
         try:
-            params = {
-                "limit": max_pages,
-                "scrapeOptions": {
-                    "formats": ["markdown"]
-                }
-            }
-            
-            if include_paths:
-                params["includePaths"] = include_paths
-            if exclude_paths:
-                params["excludePaths"] = exclude_paths
-            
-            result = self.app.crawl_url(url, params=params)
+            # Firecrawl SDK uses crawl() not crawl_url()
+            result = self.app.crawl(
+                url=url, 
+                limit=max_pages,
+                include_paths=include_paths,
+                exclude_paths=exclude_paths
+            )
             return {
                 "success": True,
                 "url": url,
-                "pages_crawled": len(result.get("data", [])),
+                "pages_crawled": len(result.data) if hasattr(result, 'data') else 0,
                 "data": result
             }
         except Exception as e:
@@ -101,12 +94,14 @@ class FirecrawlService:
             List of discovered URLs
         """
         try:
-            result = self.app.map_url(url)
+            # Firecrawl SDK uses map() not map_url()
+            result = self.app.map(url=url)
+            links = result.links if hasattr(result, 'links') else result.get('links', [])
             return {
                 "success": True,
                 "url": url,
-                "urls": result.get("links", []),
-                "total": len(result.get("links", []))
+                "urls": links,
+                "total": len(links)
             }
         except Exception as e:
             return {
@@ -133,21 +128,20 @@ class FirecrawlService:
             Extracted structured data
         """
         try:
-            params = {
-                "formats": ["extract"],
-                "extract": {
-                    "schema": schema
-                }
-            }
-            
-            if prompt:
-                params["extract"]["prompt"] = prompt
-            
-            result = self.app.scrape_url(url, params=params)
+            # Use scrape with extract format
+            result = self.app.scrape(
+                url, 
+                formats=["extract"],
+                extract={
+                    "schema": schema,
+                    "prompt": prompt
+                } if prompt else {"schema": schema}
+            )
+            extract_data = result.extract if hasattr(result, 'extract') else result.get('extract', {})
             return {
                 "success": True,
                 "url": url,
-                "data": result.get("extract", {})
+                "data": extract_data
             }
         except Exception as e:
             return {
