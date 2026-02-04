@@ -72,7 +72,16 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
             );
 
             if (profile && profile.profile) {
-              setProfileText(profile.profile);
+              // profile.profile 可能是对象或字符串
+              const profileData = profile.profile;
+              if (typeof profileData === 'string') {
+                setProfileText(profileData);
+              } else if (profileData.profile_text) {
+                setProfileText(profileData.profile_text);
+              } else {
+                // 如果是其他结构，格式化显示
+                setProfileText(JSON.stringify(profileData, null, 2));
+              }
               setAnalysisResult(analysis);
               setScanProgress('AI 画像生成完成');
             } else {
