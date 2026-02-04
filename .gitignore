@@ -35,3 +35,4 @@ env/
 
 # Environment variables
 .env.local
+aws-key.pem
