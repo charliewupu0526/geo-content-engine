@@ -2,7 +2,8 @@
  * API Client - Unified interface for backend API calls
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+// AWS EC2 后端地址 (无超时限制)
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://44.220.84.143:8000';
 
 interface ApiResponse<T> {
   success: boolean;

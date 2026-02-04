@@ -31,12 +31,8 @@ app = FastAPI(
 # Configure CORS for frontend access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",  # Vite dev server
-        "http://localhost:3000",
-        "https://*.vercel.app",   # Vercel deployments
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],  # 允许所有源访问 (AWS 部署需要)
+    allow_credentials=False,  # 使用 * 时必须设为 False
     allow_methods=["*"],
     allow_headers=["*"],
 )
