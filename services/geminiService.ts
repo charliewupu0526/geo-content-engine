@@ -7,28 +7,9 @@
 
 import { apiClient } from './apiClient';
 
-// Mock data for fallback
-export const MOCK_GAP_REPORT = {
-  summary: "诊断结论：当前站点在生成式引擎中的'实体权威度'不足，由于缺乏结构化专家引用和高密度的 Markdown 数据矩阵。",
-  competitorGaps: [
-    { dimension: "实体权重", description: "竞品引用 2024 标准，我方缺乏规范引用。", impact: "极高" }
-  ],
-  missingKeywords: [
-    { cluster: "技术底层", keywords: ["RAG 对齐", "Schema FAQ", "内容幻觉抑制"], priority: "高" },
-    { cluster: "应用场景", keywords: ["GEO 转化率", "AI 搜索流量", "实体建模"], priority: "中" }
-  ],
-  structuralGaps: [
-    { component: "Markdown 表格", whyNeeded: "Perplexity 优先抓取表格键值对。" }
-  ],
-  suggestions: [
-    { action: "重构核心博客为数据矩阵", timeframe: "3天", expectedOutcome: "提升覆盖率" }
-  ]
-};
-
-export const MOCK_KEYWORDS = [
-  { keyword: "GEO 优化", title: "2025 GEO 实战手册", intent: "Commercial", estimatedWords: 2500, template: "行业蓝皮书" },
-  { keyword: "AI 算法", title: "SearchGPT 排序逻辑", intent: "Informational", estimatedWords: 2000, template: "技术解析" }
-];
+// No mock data - all data comes from real backend APIs
+export const MOCK_GAP_REPORT = null; // Deprecated: kept for import compatibility
+export const MOCK_KEYWORDS: any[] = []; // Deprecated: kept for import compatibility
 
 /**
  * Analyze a company website using real crawler and AI
@@ -38,12 +19,12 @@ export const analyzeCompanyWebsite = async (url: string, companyName?: string) =
     const result = await apiClient.analyzeCompany(url, companyName);
 
     // 如果请求成功且数据中没有业务逻辑错误
-    if (result.success && result.data && !result.data.error) {
+    if (result.success && result.data && !(result.data as any).error) {
       return result.data;
     }
 
     // 返回具体错误信息
-    const errorMessage = result.data?.error || result.error || 'Failed to analyze company';
+    const errorMessage = (result.data as any)?.error || result.error || 'Failed to analyze company';
     console.error('API Error:', errorMessage);
 
     // 返回包含错误的完整对象，以便 UI 显示
@@ -59,9 +40,11 @@ export const analyzeCompanyWebsite = async (url: string, companyName?: string) =
 /**
  * Scrape a URL using Firecrawl
  */
-export const scrapeUrl = async (url: string) => {
+export const scrapeUrl = async (url: string, projectId?: string) => {
   try {
-    const result = await apiClient.scrapeUrl(url, ['markdown', 'html']);
+    // Enable saveToDb if projectId is provided
+    const saveToDb = !!projectId;
+    const result = await apiClient.scrapeUrl(url, ['markdown', 'html'], projectId, saveToDb);
     if (result.success && result.data) {
       return result.data;
     }
@@ -89,38 +72,138 @@ export const generateCompanyProfile = async (companyName: string, domain: string
 };
 
 /**
- * Generate keywords from company profile
+ * Generate keywords from company profile (legacy)
  */
 export const generateKeywords = async (profile: any) => {
   try {
-    // TODO: Add dedicated keyword generation endpoint to backend
-    // For now, return mock data + use profile for context
-    console.log('Generating keywords for profile:', profile?.company_name);
-    return MOCK_KEYWORDS;
+    const result = await apiClient.generateKeywords(profile);
+    if (result.success && result.data && (result.data as any).keywords) {
+      return (result.data as any).keywords;
+    }
+    console.error('Keyword API failed, no fallback data');
+    return [];
   } catch (error) {
     console.error('Failed to generate keywords:', error);
-    return MOCK_KEYWORDS;
+    return [];
+  }
+};
+
+/**
+ * Generate enhanced keywords from 3 sources:
+ * - Google SERP rankings (real-time via SerpApi)
+ * - Competitor gap keywords (market-validated)
+ * - AI-generated brand keywords
+ */
+export const generateKeywordsEnhanced = async (
+  niche: string,
+  domain: string = '',
+  profile: any = {},
+  gapReport: any = {},
+  competitorUrls: string[] = [],
+  projectId?: string
+) => {
+  try {
+    const result = await apiClient.generateKeywordsEnhanced(
+      niche, domain, profile, gapReport, competitorUrls, projectId
+    );
+    if (result.success && result.data) {
+      const data = result.data as any;
+      return {
+        keywords: data.keywords || [],
+        sources: data.sources || {},
+        count: data.count || 0
+      };
+    }
+    console.error('Enhanced keyword API failed');
+    return { keywords: [], sources: {}, count: 0 };
+  } catch (error) {
+    console.error('Failed to generate enhanced keywords:', error);
+    return { keywords: [], sources: {}, count: 0 };
   }
 };
 
 /**
  * Generate gap analysis report by comparing with competitors
  */
-export const generateGapReport = async (profile: any, competitorUrls: string[]) => {
+export const generateGapReport = async (profile: any, competitorUrls: string[], projectId?: string) => {
   try {
     if (!competitorUrls || competitorUrls.length === 0) {
-      console.log('No competitor URLs provided, returning mock data');
-      return MOCK_GAP_REPORT;
+      console.log('No competitor URLs provided');
+      return null; // Return null instead of mock
     }
 
-    const result = await apiClient.analyzeCompetitor(profile, competitorUrls);
+    const result = await apiClient.analyzeCompetitor(profile, competitorUrls, projectId);
     if (result.success && result.data) {
       return result.data;
     }
     throw new Error(result.error || 'Failed to generate gap report');
   } catch (error) {
     console.error('Failed to generate gap report:', error);
-    return MOCK_GAP_REPORT;
+    return null; // Return null instead of mock
+  }
+};
+
+
+/**
+ * Discover competitors using AI
+ */
+export const discoverCompanyCompetitors = async (niche: string, companyName?: string, domain?: string) => {
+  try {
+    const result = await apiClient.discoverCompetitors(niche, companyName, domain);
+    // API returns {success, competitors: [...]} not {success, data: [...]}
+    // Actually apiClient wraps it in data
+    if (result.success && (result.data as any)?.competitors) {
+      return (result.data as any).competitors;
+    }
+    throw new Error(result.error || 'Failed to discover competitors');
+  } catch (error) {
+    console.error('Failed to discover competitors:', error);
+    return null;
+  }
+};
+
+/**
+ * Discover hidden competitors using AI
+ */
+export const discoverHiddenCompetitors = async (companyProfile: any) => {
+  try {
+    // Ensure profile is an object
+    let profileData = companyProfile;
+    if (typeof companyProfile === 'string') {
+      try {
+        profileData = JSON.parse(companyProfile);
+      } catch (e) {
+        // If string is not JSON, wrap it
+        profileData = { description: companyProfile };
+      }
+    }
+
+    const result = await apiClient.discoverHiddenCompetitors(profileData);
+
+    // API client wrapper returns { success, data }
+    if (result.success && result.data && (result.data as any).hidden_competitors) {
+      return (result.data as any).hidden_competitors;
+    }
+    return [];
+  } catch (error) {
+    console.error('Failed to discover hidden competitors:', error);
+    return [];
+  }
+};
+
+/**
+ * Perform Deep Gap Analysis using Knowledge Base
+ */
+export const performDeepGapAnalysis = async (projectId: string) => {
+  try {
+    const result = await apiClient.generateDeepGapAnalysis(projectId);
+    if (result.success && result.data && (result.data as any).data) {
+      return (result.data as any).data;
+    }
+    throw new Error(result.error || 'Failed to perform deep gap analysis');
+  } catch (error) {
+    console.error('Failed to perform deep gap analysis:', error);
+    return null;
   }
 };
 
@@ -147,7 +230,7 @@ export const generateProductionMatrix = async (keywords: string[], branches: str
           branch: 'Social',
           title: `🔥 AI 搜索避坑指南：关于 ${kw} 你必须知道的 3 件事！`,
           intent: 'Informational',
-          estimatedWords: 300
+          estimatedWords: 150
         });
       }
     });
@@ -159,60 +242,99 @@ export const generateProductionMatrix = async (keywords: string[], branches: str
 };
 
 /**
+ * Generate viral titles using AI (Phase 5)
+ */
+export const generateViralTitles = async (topic: string, niche: string, profile: any, useTrends: boolean = true) => {
+  try {
+    const result = await apiClient.generateTitles(topic, niche, profile, useTrends);
+    if (result.success && result.data && (result.data as any).titles) {
+      return (result.data as any).titles;
+    }
+    return [];
+  } catch (error) {
+    console.error("Failed to generate titles:", error);
+    return [];
+  }
+};
+
+/**
  * Generate content for a task using backend AI
  */
 export const generateContentByBranch = async (task: any, profile: any) => {
   const isArticle = task.branch === 'Article';
+  const contentType = isArticle ? 'Article' : 'Social';
 
   try {
     // Call the backend content generation API
-    // Note: This would need a dedicated endpoint
-    // For now, generate locally with a template and mark for backend generation
+    const result = await apiClient.generateContent(
+      task.title,
+      contentType,
+      task.keyword,
+      profile
+    );
 
-    if (isArticle) {
-      return `# ${task.title}
-
-## 核心见解
-
-在 2025 年的 AI 搜索时代，${task.keyword} 已成为品牌获取流量的关键战场。
-
-## 为什么这很重要？
-
-| 维度 | 传统 SEO | GEO 优化 |
-|-----|---------|---------|
-| 内容形式 | 关键词堆砌 | 结构化数据 |
-| 优化目标 | 排名靠前 | 被 AI 引用 |
-| 核心指标 | 点击率 | 引用率 |
-
-## FAQ
-
-### Q: 什么是 GEO？
-A: GEO (Generative Engine Optimization) 是专门针对 AI 搜索引擎的优化策略。
-
-### Q: 如何开始 GEO 优化？
-A: 首先确保内容结构化，添加清晰的标题层级和数据表格。
-
----
-
-*本文由 GEO 内容引擎生成*`;
-    } else {
-      return `${task.title}
-
-🚀 2025 GEO 新趋势！
-
-1️⃣ 结构化内容是王道
-2️⃣ 实体对齐不能少
-3️⃣ AI 引用率决定流量
-
-👉 点击链接了解更多...
-
-#GEO #AI搜索 #内容营销 #数字营销`;
+    if (result.success && result.data && (result.data as any).content) {
+      return (result.data as any).content;
     }
-  } catch (error) {
-    console.error('Failed to generate content:', error);
+
+    // If API fails, return error message (no hardcoded fallback)
+    console.error('Content generation API failed:', result.error);
     return isArticle
-      ? `# ${task.title}\n\n## 核心见解\n内容生成失败，请稍后重试。`
-      : `${task.title}\n\n🚀 内容生成中...\n\n#GEO #AI #Marketing`;
+      ? `# ${task.title}\n\n内容生成失败: ${result.error || '请重试'}`
+      : `${task.title}\n\n⚠️ 内容生成失败\n\n#GEO`;
+  } catch (error) {
+    return isArticle
+      ? `# ${task.title}\n\n内容生成失败: ${error instanceof Error ? error.message : '网络错误'}`
+      : `${task.title}\n\n⚠️ 内容生成失败\n\n#GEO`;
+  }
+};
+
+/**
+ * Regenerate content based on feedback
+ */
+export const regenerateContent = async (originalContent: string, feedback: string, contentType: string = 'Article') => {
+  try {
+    const result = await apiClient.regenerateContent(originalContent, feedback, contentType);
+    if (result.success && result.data && (result.data as any).content) {
+      return (result.data as any).content;
+    }
+    return originalContent; // Fallback
+  } catch (error) {
+    console.error('Failed to regenerate content:', error);
+    return originalContent;
+  }
+};
+
+
+/**
+ * Generate Batch Content (Phase 4)
+ */
+export const generateBatchContent = async (projectId: string, tasks: any[]) => {
+  try {
+    const result = await apiClient.generateBatchContent(projectId, tasks, true);
+    if (result.success && result.data && (result.data as any).results) {
+      return (result.data as any).results;
+    }
+    throw new Error(result.error || 'Failed to generate batch content');
+  } catch (error) {
+    console.error('Failed to generate batch content:', error);
+    return null;
+  }
+};
+
+/**
+ * Publish content to platform
+ */
+export const publishContent = async (projectId: string, platform: string, contentData: any, config?: any) => {
+  try {
+    const result = await apiClient.publishContent(projectId, platform, contentData, config);
+    if (result.success) {
+      return result.data || { success: true };
+    }
+    throw new Error(result.error || 'Failed to publish content');
+  } catch (error) {
+    console.error('Failed to publish content:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
   }
 };
 

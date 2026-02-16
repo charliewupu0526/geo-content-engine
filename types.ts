@@ -73,6 +73,7 @@ export interface TaskItem {
   timestamp: number;
   url?: string;
   selected?: boolean;
+  profile?: CompanyProfile;
 }
 
 export interface KeywordItem {
@@ -83,6 +84,15 @@ export interface KeywordItem {
   estimatedWords: number;
   template: string;
   selected?: boolean;
+  // Enhanced fields
+  source?: 'google_serp' | 'competitor_gap' | 'ai_generated';
+  serpPosition?: number | null;
+  ourRanking?: number | null;
+  snippet?: string;
+  isLongTail?: boolean;
+  isQuestion?: boolean;
+  cluster?: string;
+  priority?: string;
 }
 
 export interface GapReport {

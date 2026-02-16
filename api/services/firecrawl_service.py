@@ -38,10 +38,21 @@ class FirecrawlService:
                 "data": data
             }
         except Exception as e:
+            error_msg = str(e)
+            print(f"Firecrawl Scrape Error for {url}: {error_msg}")
+            
+            # Handle common validation errors from SDK/API
+            if "Invalid URL" in error_msg or "invalid_format" in error_msg:
+                return {
+                    "success": False,
+                    "url": url,
+                    "error": "The provided URL was rejected by the crawler. Please ensure it is a publicly accessible, valid website."
+                }
+                
             return {
                 "success": False,
                 "url": url,
-                "error": str(e)
+                "error": error_msg
             }
     
     async def crawl_website(

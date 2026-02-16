@@ -1,0 +1,1773 @@
+INFO:     Will watch for changes in these directories: ['/Users/charliewu/Downloads/geo-content-engine (1)']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [84511] using StatReload
+INFO:     Started server process [84567]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+🚀 GEO Content Engine API starting...
+INFO:     127.0.0.1:58703 - "OPTIONS /api/auth/signup HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58703 - "POST /api/auth/signup HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58721 - "OPTIONS /api/auth/login HTTP/1.1" 200 OK
+Error signing in: Email not confirmed
+INFO:     127.0.0.1:58721 - "POST /api/auth/login HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:58766 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58851 - "OPTIONS /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58851 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58851 - "OPTIONS /api/intelligence/analyze-company HTTP/1.1" 200 OK
+OpenAI Service initialized with Key: sk-proj-...nQIA
+Perplexity Service initialized with Key: pplx-dje...
+Scraping URL: https://greenlife.com
+Scrape failed or empty: Internal Server Error: Failed to scrape. All scraping engines failed to retrieve content from this URL. Engines tried: [index, fire-engine;chrome-cdp, fire-engine(retry);chrome-cdp, fire-engine;tlsclient, fetch]. This usually happens when: (1) The URL is invalid or the page doesn't exist (404), (2) The website is blocking automated access, (3) The website is down or unreachable, (4) The page requires authentication. Double check the URL is correct and accessible in a browser. If the issue persists, contact us at help@firecrawl.com with your request ID for investigation. - No additional error details provided.
+Falling back to Perplexity search for brand info...
+[Perplexity Fallback] Searching brand info: GreenLife Eco
+[Perplexity Fallback] Got 1312 chars, 8 citations
+Perplexity search successful, analyzing 1312 chars
+INFO:     127.0.0.1:58851 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59194 - "GET /api/health HTTP/1.1" 200 OK
+Scraping URL: https://onlysmiley.leapaccelerator.com/
+Analyzing scraped content length: 5670
+INFO:     127.0.0.1:59194 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59194 - "OPTIONS /api/intelligence/discover-competitors HTTP/1.1" 200 OK
+[SearchService] === Starting 3-step competitor discovery for 'AI模特/商品图' ===
+[SearchService] Step 1: Discovering candidates...
+[SearchService] Perplexity returned 2050 chars, 9 citations
+[SearchService] Step 1 found 12 candidates: ['Pic Copilot', '易可图 (Yiketu)', 'Generated Photos', 'Midjourney (MJ)', '创自由 (Chuangziyou)', '美图设计室', 'LinkFox', '燕雀光年AI全能设计', '妙手ERP', 'WeShop唯象', '阿里云电商AI', '美图公司 (Meitu)']
+[SearchService] Step 2: Validating via AI citation testing...
+[SearchService] Running 5 validation queries...
+  [Pic Copilot] mentions=0/5, citations=0/5, score=0%
+  [易可图 (Yiketu)] mentions=0/5, citations=0/5, score=0%
+  [Generated Photos] mentions=0/5, citations=0/5, score=0%
+  [Midjourney (MJ)] mentions=0/5, citations=0/5, score=0%
+  [创自由 (Chuangziyou)] mentions=0/5, citations=0/5, score=0%
+  [美图设计室] mentions=0/5, citations=0/5, score=0%
+  [LinkFox] mentions=0/5, citations=0/5, score=0%
+  [燕雀光年AI全能设计] mentions=0/5, citations=0/5, score=0%
+  [妙手ERP] mentions=0/5, citations=0/5, score=0%
+  [WeShop唯象] mentions=0/5, citations=0/5, score=0%
+  [阿里云电商AI] mentions=0/5, citations=0/5, score=0%
+  [美图公司 (Meitu)] mentions=0/5, citations=0/5, score=0%
+[SearchService] Step 2 validated 12 competitors
+[SearchService] Step 3: Scoring and filtering...
+[SearchService] Only 0 passed 50% threshold, taking top 5 by score
+[SearchService] === Pipeline complete: returning 5 competitors ===
+  - Pic Copilot: score=0%, citations=0
+  - 易可图 (Yiketu): score=0%, citations=0
+  - Generated Photos: score=0%, citations=0
+  - Midjourney (MJ): score=0%, citations=0
+  - 创自由 (Chuangziyou): score=0%, citations=0
+INFO:     127.0.0.1:59194 - "POST /api/intelligence/discover-competitors HTTP/1.1" 200 OK
+Scraping URL: https://onlysmiley.leapaccelerator.com/
+Analyzing scraped content length: 5670
+INFO:     127.0.0.1:59194 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59194 - "OPTIONS /api/intelligence/generate-profile HTTP/1.1" 200 OK
+[Profile] Querying Perplexity for latest news about onlysmiley
+[Profile] Got 1682 chars of latest news
+INFO:     127.0.0.1:59194 - "POST /api/intelligence/generate-profile HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59578 - "OPTIONS /api/intelligence/analyze/gap-deep HTTP/1.1" 200 OK
+Error getting project 1771052216384: {'message': 'invalid input syntax for type uuid: "1771052216384"', 'code': '22P02', 'hint': None, 'details': None}
+INFO:     127.0.0.1:59578 - "POST /api/intelligence/analyze/gap-deep HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59578 - "OPTIONS /api/intelligence/analyze-competitor HTTP/1.1" 200 OK
+[GapAnalysis] Scraping competitor: https://www.piccopilot.com/zh
+[GapAnalysis] Got 59903 chars from https://www.piccopilot.com/zh
+[GapAnalysis] Scraping competitor: https://www.yiketu.com
+[GapAnalysis] Got 247 chars from https://www.yiketu.com
+[GapAnalysis] Scraping competitor: https://generated.photos
+[GapAnalysis] Got 16265 chars from https://generated.photos
+INFO:     127.0.0.1:59578 - "POST /api/intelligence/analyze-competitor HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59902 - "OPTIONS /api/intelligence/generate-keywords-enhanced HTTP/1.1" 200 OK
+SEO Service initialized with SerpApi Key: 6ba9e3f0...
+[Keywords] Discovering SERP keywords for niche: AI模特/商品图
+[SEO] Discovered 55 keywords from 5 SERP queries
+[Keywords] Got 50 SERP keywords
+[Keywords] Extracted 5 competitor gap keywords
+[Keywords] Generating AI brand keywords...
+[Keywords] Generated 8 AI keywords
+[Keywords] Filtering out competitor brands: {'chuangziyou', 'piccopilot', 'generated', 'midjourney', 'yiketu'}
+[Keywords] Total: 63 → Unique: 62
+INFO:     127.0.0.1:59902 - "POST /api/intelligence/generate-keywords-enhanced HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60046 - "OPTIONS /api/production/generate-single HTTP/1.1" 200 OK
+[Production] Conducting deep research for: [深度文章] 如何在 2025 年通过 商品图生成 提升 AI 搜索引用权重？
+INFO:     127.0.0.1:60046 - "POST /api/production/generate-single HTTP/1.1" 200 OK
+[Production] Searching social trends for: AI模特/商品图
+INFO:     127.0.0.1:60046 - "POST /api/production/generate-single HTTP/1.1" 200 OK
+[Production] Conducting deep research for: [深度文章] 如何在 2025 年通过 AI模特 提升 AI 搜索引用权重？
+INFO:     127.0.0.1:60046 - "POST /api/production/generate-single HTTP/1.1" 200 OK
+[Production] Searching social trends for: AI模特/商品图
+INFO:     127.0.0.1:60046 - "POST /api/production/generate-single HTTP/1.1" 200 OK
+[Production] Conducting deep research for: [深度文章] 如何在 2025 年通过 电商设计 提升 AI 搜索引用权重？
+INFO:     127.0.0.1:60046 - "POST /api/production/generate-single HTTP/1.1" 200 OK
+[Production] Searching social trends for: AI模特/商品图
+INFO:     127.0.0.1:60046 - "POST /api/production/generate-single HTTP/1.1" 200 OK
+[Production] Conducting deep research for: [深度文章] 如何在 2025 年通过 电商平台如何选择AI商品图生成工具？ 提升 AI 搜索引用权重？
+INFO:     127.0.0.1:60046 - "POST /api/production/generate-single HTTP/1.1" 200 OK
+[Production] Searching social trends for: AI模特/商品图
+INFO:     127.0.0.1:60046 - "POST /api/production/generate-single HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61254 - "OPTIONS /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61254 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61254 - "OPTIONS /api/intelligence/analyze-company HTTP/1.1" 200 OK
+Scraping URL: https://tagiofficial.com/
+Analyzing scraped content length: 27396
+INFO:     127.0.0.1:61254 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61407 - "OPTIONS /api/intelligence/discover-competitors HTTP/1.1" 200 OK
+[SearchService] === Starting 3-step competitor discovery for '零售生活品牌' ===
+[SearchService] Step 1: Discovering candidates...
+[SearchService] Perplexity returned 1599 chars, 8 citations
+[SearchService] Step 1 found 12 candidates: ['京东京造', '网易严选', '米家', '盒马', '惠宜', '胖东来', "Member's Mark", '科克兰', '东方甄选', '天猫超市', '名创优品', '喵满分']
+[SearchService] Step 2: Validating via AI citation testing...
+[SearchService] Running 5 validation queries...
+  [京东京造] mentions=0/5, citations=0/5, score=0%
+  [网易严选] mentions=0/5, citations=0/5, score=0%
+  [米家] mentions=0/5, citations=0/5, score=0%
+  [盒马] mentions=1/5, citations=0/5, score=14%
+  [惠宜] mentions=0/5, citations=0/5, score=0%
+  [胖东来] mentions=1/5, citations=0/5, score=14%
+  [Member's Mark] mentions=0/5, citations=0/5, score=0%
+  [科克兰] mentions=0/5, citations=0/5, score=0%
+  [东方甄选] mentions=0/5, citations=0/5, score=0%
+  [天猫超市] mentions=0/5, citations=0/5, score=0%
+  [名创优品] mentions=1/5, citations=0/5, score=14%
+  [喵满分] mentions=0/5, citations=0/5, score=0%
+[SearchService] Step 2 validated 12 competitors
+[SearchService] Step 3: Scoring and filtering...
+[SearchService] Only 0 passed 50% threshold, taking top 5 by score
+[SearchService] === Pipeline complete: returning 5 competitors ===
+  - 盒马: score=14%, citations=1
+  - 胖东来: score=14%, citations=1
+  - 名创优品: score=14%, citations=1
+  - 京东京造: score=0%, citations=0
+  - 网易严选: score=0%, citations=0
+INFO:     127.0.0.1:61407 - "POST /api/intelligence/discover-competitors HTTP/1.1" 200 OK
+Scraping URL: https://tagiofficial.com/
+Analyzing scraped content length: 27396
+INFO:     127.0.0.1:61407 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61407 - "OPTIONS /api/intelligence/generate-profile HTTP/1.1" 200 OK
+[Profile] Querying Perplexity for latest news about Tagi
+[Profile] Got 975 chars of latest news
+INFO:     127.0.0.1:61407 - "POST /api/intelligence/generate-profile HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61693 - "OPTIONS /api/intelligence/discover-hidden-competitors HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61693 - "POST /api/intelligence/discover-hidden-competitors HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'api/services/perplexity_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [84567]
+INFO:     Started server process [92598]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/services/search_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [92598]
+INFO:     Started server process [92610]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/routers/intelligence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [92610]
+INFO:     Started server process [92627]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/routers/intelligence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [92627]
+INFO:     Started server process [92661]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/prompts.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [92661]
+INFO:     Started server process [92674]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/routers/production.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [92674]
+INFO:     Started server process [92683]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/prompts.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [92683]
+INFO:     Started server process [92689]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+🚀 GEO Content Engine API starting...
+INFO:     127.0.0.1:62885 - "OPTIONS /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62885 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62885 - "OPTIONS /api/intelligence/analyze-company HTTP/1.1" 200 OK
+OpenAI Service initialized with Key: sk-proj-...nQIA
+Perplexity Service initialized with Key: pplx-dje...
+Scraping URL: https://tagiofficial.com/
+Analyzing scraped content length: 27396
+INFO:     127.0.0.1:62885 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62885 - "OPTIONS /api/intelligence/discover-competitors HTTP/1.1" 200 OK
+[SearchService] === Starting 3-step competitor discovery for 'tagi' ===
+[SearchService] Step 1: Discovering candidates...
+[SearchService] Perplexity returned 1977 chars, 7 citations
+[SearchService] Step 1 found 13 candidates: ['Miniso', 'Lock & Lock', 'MUJI (无印良品)', 'The Little Ondo', 'Chip Chop', 'Zara Home', 'Flying Tiger Copenhagen', '名创优品 (Topway)', 'DRUNK BAKER', 'Kojii', 'LuccaZara', 'Vloggi', 'Pop Mart']
+[SearchService] Step 2: Validating via AI citation testing...
+[SearchService] Running 5 validation queries...
+  [Miniso] mentions=1/5, citations=0/5, score=14%
+  [Lock & Lock] mentions=1/5, citations=0/5, score=14%
+  [MUJI (无印良品)] mentions=0/5, citations=0/5, score=0%
+  [The Little Ondo] mentions=0/5, citations=0/5, score=0%
+  [Chip Chop] mentions=0/5, citations=0/5, score=0%
+  [Zara Home] mentions=0/5, citations=0/5, score=0%
+  [Flying Tiger Copenhagen] mentions=0/5, citations=0/5, score=0%
+  [名创优品 (Topway)] mentions=0/5, citations=0/5, score=0%
+  [DRUNK BAKER] mentions=0/5, citations=0/5, score=0%
+  [Kojii] mentions=0/5, citations=0/5, score=0%
+  [LuccaZara] mentions=0/5, citations=0/5, score=0%
+  [Vloggi] mentions=0/5, citations=0/5, score=0%
+  [Pop Mart] mentions=0/5, citations=0/5, score=0%
+[SearchService] Step 2 validated 13 competitors
+[SearchService] Step 3: Scoring and filtering...
+[SearchService] Only 0 passed 30% threshold, taking top 5 by score
+[SearchService] === Pipeline complete: returning 5 items ===
+  - Miniso : score=14%, citations=1
+  - Lock & Lock : score=14%, citations=1
+  - MUJI (无印良品) : score=0%, citations=0
+  - The Little Ondo : score=0%, citations=0
+  - Chip Chop : score=0%, citations=0
+INFO:     127.0.0.1:62885 - "POST /api/intelligence/discover-competitors HTTP/1.1" 200 OK
+Scraping URL: https://tagiofficial.com/
+Analyzing scraped content length: 27396
+INFO:     127.0.0.1:62885 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62885 - "OPTIONS /api/intelligence/generate-profile HTTP/1.1" 200 OK
+[Profile] Querying Perplexity for latest news about tagi
+[Profile] Got 482 chars from lastest news
+INFO:     127.0.0.1:62885 - "POST /api/intelligence/generate-profile HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63034 - "OPTIONS /api/intelligence/discover-hidden-competitors HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63034 - "POST /api/intelligence/discover-hidden-competitors HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63040 - "OPTIONS /api/intelligence/analyze/gap-deep HTTP/1.1" 200 OK
+Error getting project 1771054748001: {'message': 'invalid input syntax for type uuid: "1771054748001"', 'code': '22P02', 'hint': None, 'details': None}
+INFO:     127.0.0.1:63040 - "POST /api/intelligence/analyze/gap-deep HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63040 - "OPTIONS /api/intelligence/analyze-competitor HTTP/1.1" 200 OK
+[GapAnalysis] Scraping competitor: https://www.miniso.com
+[GapAnalysis] Got 16269 chars from https://www.miniso.com
+[GapAnalysis] Scraping competitor: https://www.locknlock.com
+[GapAnalysis] Got 4880 chars from https://www.locknlock.com
+[GapAnalysis] Scraping competitor: https://www.muji.com/cn
+[GapAnalysis] Got 375 chars from https://www.muji.com/cn
+INFO:     127.0.0.1:63040 - "POST /api/intelligence/analyze-competitor HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63099 - "OPTIONS /api/intelligence/generate-keywords-enhanced HTTP/1.1" 200 OK
+SEO Service initialized with SerpApi Key: 6ba9e3f0...
+[Keywords] Discovering SERP keywords for niche: 零售品牌
+[SEO] Discovered 64 keywords from 5 SERP queries
+[Keywords] Got 50 SERP keywords
+[Keywords] Extracted 6 competitor gap keywords
+[Keywords] Generating AI brand keywords...
+[Keywords] Generated 8 AI keywords
+[Keywords] Filtering out competitor brands: {'miniso', 'the-little-ondo', 'locknlock', 'muji', 'chipchop'}
+[Keywords] Total: 64 → Unique: 64
+INFO:     127.0.0.1:63099 - "POST /api/intelligence/generate-keywords-enhanced HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63215 - "OPTIONS /api/production/generate-single HTTP/1.1" 200 OK
+[Production] Conducting deep research for: [深度文章] 如何在 2025 年通过 流行文化 提升 AI 搜索引用权重？
+INFO:     127.0.0.1:63215 - "POST /api/production/generate-single HTTP/1.1" 200 OK
+[Production] Searching social trends for: 零售品牌
+INFO:     127.0.0.1:63215 - "POST /api/production/generate-single HTTP/1.1" 200 OK
+[Production] Conducting deep research for: [深度文章] 如何在 2025 年通过 联名产品 提升 AI 搜索引用权重？
+INFO:     127.0.0.1:63215 - "POST /api/production/generate-single HTTP/1.1" 200 OK
+[Production] Searching social trends for: 零售品牌
+INFO:     127.0.0.1:63215 - "POST /api/production/generate-single HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'api/services/supabase_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [92689]
+INFO:     Started server process [93005]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/routers/intelligence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [93005]
+INFO:     Started server process [93013]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/routers/production.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [93013]
+INFO:     Started server process [93020]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/routers/projects.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [93020]
+INFO:     Started server process [93023]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/prompts.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [93023]
+INFO:     Started server process [93042]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/services/gemini_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [93042]
+INFO:     Started server process [93049]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/routers/production.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [93049]
+INFO:     Started server process [93052]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/services/supabase_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [93052]
+Process SpawnProcess-16:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/_compat.py", line 60, in asyncio_run
+    return loop.run_until_complete(main)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/base_events.py", line 642, in run_until_complete
+    return future.result()
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/index.py", line 13, in <module>
+    from api.routers import crawler, intelligence, projects, production, publishing, auth
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/routers/crawler.py", line 9, in <module>
+    from api.services.supabase_service import get_supabase_service
+ImportError: cannot import name 'get_supabase_service' from 'api.services.supabase_service' (/Users/charliewu/Downloads/geo-content-engine (1)/api/services/supabase_service.py)
+WARNING:  StatReload detected changes in 'api/services/supabase_service.py'. Reloading...
+INFO:     Started server process [6108]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/prompts.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [6108]
+INFO:     Started server process [6776]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/services/seo_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [6776]
+INFO:     Started server process [6789]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/services/seo_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [6789]
+Process SpawnProcess-20:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/_compat.py", line 60, in asyncio_run
+    return loop.run_until_complete(main)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/base_events.py", line 642, in run_until_complete
+    return future.result()
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/index.py", line 13, in <module>
+    from api.routers import crawler, intelligence, projects, production, publishing, auth
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/routers/intelligence.py", line 15, in <module>
+    from api.services.seo_service import get_seo_service
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/services/seo_service.py", line 254
+    print(f"[SEO] Discovered {len(keywords)} keywords from {len(queries)} SERP queries")
+IndentationError: unexpected unindent
+WARNING:  StatReload detected changes in 'api/services/seo_service.py'. Reloading...
+Process SpawnProcess-21:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/_compat.py", line 60, in asyncio_run
+    return loop.run_until_complete(main)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/base_events.py", line 642, in run_until_complete
+    return future.result()
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/index.py", line 13, in <module>
+    from api.routers import crawler, intelligence, projects, production, publishing, auth
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/routers/intelligence.py", line 15, in <module>
+    from api.services.seo_service import get_seo_service
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/services/seo_service.py", line 254
+    print(f"[SEO] Discovered {len(keywords)} keywords from {len(queries)} SERP queries")
+IndentationError: unexpected unindent
+WARNING:  StatReload detected changes in 'api/services/seo_service.py'. Reloading...
+INFO:     Started server process [7663]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/routers/intelligence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [7663]
+INFO:     Started server process [7679]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/prompts.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [7679]
+INFO:     Started server process [8603]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/services/gemini_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8603]
+INFO:     Started server process [8608]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/services/seo_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8608]
+INFO:     Started server process [8614]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/routers/intelligence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8614]
+INFO:     Started server process [8621]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/prompts.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8621]
+INFO:     Started server process [10755]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/prompts.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10755]
+INFO:     Started server process [10762]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/prompts.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10762]
+INFO:     Started server process [11894]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/prompts.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [11894]
+INFO:     Started server process [11899]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/routers/projects.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [11899]
+INFO:     Started server process [14532]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/prompts.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [14532]
+INFO:     Started server process [15986]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/services/supabase_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [15986]
+INFO:     Started server process [18102]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/services/supabase_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [18102]
+INFO:     Started server process [18110]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'setup_db.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [18110]
+INFO:     Started server process [18119]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/routers/projects.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [18119]
+INFO:     Started server process [20211]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/routers/projects.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [20211]
+INFO:     Started server process [20975]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'verify_full_flow.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [20975]
+INFO:     Started server process [22125]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/routers/projects.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [22125]
+INFO:     Started server process [25694]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/services/supabase_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [25694]
+INFO:     Started server process [25700]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+🚀 GEO Content Engine API starting...
+INFO:     127.0.0.1:56518 - "OPTIONS /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 9 projects for user None
+INFO:     127.0.0.1:56518 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 9 projects for user None
+INFO:     127.0.0.1:56518 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 9 projects for user None
+INFO:     127.0.0.1:56528 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 9 projects for user None
+INFO:     127.0.0.1:56518 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 9 projects for user None
+INFO:     127.0.0.1:56674 - "GET /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56674 - "POST /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56699 - "OPTIONS /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56699 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56699 - "OPTIONS /api/intelligence/analyze-company HTTP/1.1" 200 OK
+OpenAI Service initialized with Key: sk-proj-...nQIA
+Perplexity Service initialized with Key: pplx-dje...
+Scraping URL: https://
+Scrape failed or empty: Bad Request: Failed to scrape. Bad Request - [{'code': 'invalid_format', 'format': 'url', 'path': ['url'], 'message': 'Invalid URL'}, {'code': 'custom', 'path': ['url'], 'message': 'URL must have a valid top-level domain or be a valid path'}, {'code': 'custom', 'path': ['url'], 'message': 'Invalid URL'}]
+INFO:     127.0.0.1:56699 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56726 - "GET /api/health HTTP/1.1" 200 OK
+Scraping URL: https://
+Scrape failed or empty: Bad Request: Failed to scrape. Bad Request - [{'code': 'invalid_format', 'format': 'url', 'path': ['url'], 'message': 'Invalid URL'}, {'code': 'custom', 'path': ['url'], 'message': 'URL must have a valid top-level domain or be a valid path'}, {'code': 'custom', 'path': ['url'], 'message': 'Invalid URL'}]
+INFO:     127.0.0.1:56726 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 10 projects for user None
+INFO:     127.0.0.1:56726 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 10 projects for user None
+INFO:     127.0.0.1:56777 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 10 projects for user None
+INFO:     127.0.0.1:56894 - "GET /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56894 - "GET /api/health HTTP/1.1" 200 OK
+Scraping URL: https://
+Scrape failed or empty: Bad Request: Failed to scrape. Bad Request - [{'code': 'invalid_format', 'format': 'url', 'path': ['url'], 'message': 'Invalid URL'}, {'code': 'custom', 'path': ['url'], 'message': 'URL must have a valid top-level domain or be a valid path'}, {'code': 'custom', 'path': ['url'], 'message': 'Invalid URL'}]
+INFO:     127.0.0.1:56894 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 10 projects for user None
+INFO:     127.0.0.1:57107 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 10 projects for user None
+INFO:     127.0.0.1:57107 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 10 projects for user None
+INFO:     127.0.0.1:57107 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 10 projects for user None
+INFO:     127.0.0.1:57138 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 10 projects for user None
+INFO:     127.0.0.1:57107 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 10 projects for user None
+INFO:     127.0.0.1:57263 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 10 projects for user None
+INFO:     127.0.0.1:57308 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 10 projects for user None
+INFO:     127.0.0.1:57322 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 10 projects for user None
+INFO:     127.0.0.1:57322 - "GET /api/projects/ HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'api/services/supabase_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [25700]
+INFO:     Started server process [25823]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+🚀 GEO Content Engine API starting...
+DEBUG: list_projects fetched 10 projects for user None
+INFO:     127.0.0.1:57401 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 10 projects for user None
+INFO:     127.0.0.1:57443 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 10 projects for user None
+INFO:     127.0.0.1:57443 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 10 projects for user None
+INFO:     127.0.0.1:57443 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 10 projects for user None
+INFO:     127.0.0.1:57475 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 10 projects for user None
+INFO:     127.0.0.1:57443 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 10 projects for user None
+INFO:     127.0.0.1:57639 - "GET /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57639 - "POST /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57708 - "GET /api/health HTTP/1.1" 200 OK
+OpenAI Service initialized with Key: sk-proj-...nQIA
+Perplexity Service initialized with Key: pplx-dje...
+Scraping URL: https://
+Scrape failed or empty: Bad Request: Failed to scrape. Bad Request - [{'code': 'invalid_format', 'format': 'url', 'path': ['url'], 'message': 'Invalid URL'}, {'code': 'custom', 'path': ['url'], 'message': 'URL must have a valid top-level domain or be a valid path'}, {'code': 'custom', 'path': ['url'], 'message': 'Invalid URL'}]
+INFO:     127.0.0.1:57708 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 11 projects for user None
+INFO:     127.0.0.1:57722 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 11 projects for user None
+INFO:     127.0.0.1:57763 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 11 projects for user None
+INFO:     127.0.0.1:57763 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 11 projects for user None
+INFO:     127.0.0.1:57775 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 11 projects for user None
+INFO:     127.0.0.1:57775 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 11 projects for user None
+INFO:     127.0.0.1:57775 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 11 projects for user None
+INFO:     127.0.0.1:57803 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 11 projects for user None
+INFO:     127.0.0.1:57775 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 11 projects for user None
+INFO:     127.0.0.1:57824 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 11 projects for user None
+INFO:     127.0.0.1:57838 - "GET /api/projects/ HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'api/services/firecrawl_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [25823]
+INFO:     Started server process [25912]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+🚀 GEO Content Engine API starting...
+INFO:     127.0.0.1:58079 - "OPTIONS /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 11 projects for user None
+INFO:     127.0.0.1:58079 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 11 projects for user None
+INFO:     127.0.0.1:58079 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 11 projects for user None
+INFO:     127.0.0.1:58110 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 11 projects for user None
+INFO:     127.0.0.1:58079 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 11 projects for user None
+INFO:     127.0.0.1:58110 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 11 projects for user None
+INFO:     127.0.0.1:58127 - "GET /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58127 - "POST /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58145 - "OPTIONS /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58145 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58145 - "OPTIONS /api/intelligence/analyze-company HTTP/1.1" 200 OK
+OpenAI Service initialized with Key: sk-proj-...nQIA
+Perplexity Service initialized with Key: pplx-dje...
+Scraping URL: https://
+Scrape failed or empty: Bad Request: Failed to scrape. Bad Request - [{'code': 'invalid_format', 'format': 'url', 'path': ['url'], 'message': 'Invalid URL'}, {'code': 'custom', 'path': ['url'], 'message': 'URL must have a valid top-level domain or be a valid path'}, {'code': 'custom', 'path': ['url'], 'message': 'Invalid URL'}]
+INFO:     127.0.0.1:58145 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 12 projects for user None
+INFO:     127.0.0.1:58156 - "GET /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58156 - "GET /api/health HTTP/1.1" 200 OK
+Scraping URL: https://
+Scrape failed or empty: Bad Request: Failed to scrape. Bad Request - [{'code': 'invalid_format', 'format': 'url', 'path': ['url'], 'message': 'Invalid URL'}, {'code': 'custom', 'path': ['url'], 'message': 'URL must have a valid top-level domain or be a valid path'}, {'code': 'custom', 'path': ['url'], 'message': 'Invalid URL'}]
+INFO:     127.0.0.1:58156 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 12 projects for user None
+INFO:     127.0.0.1:58194 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 12 projects for user None
+INFO:     127.0.0.1:58194 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 12 projects for user None
+INFO:     127.0.0.1:58199 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 12 projects for user None
+INFO:     127.0.0.1:58194 - "GET /api/projects/ HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'api/services/firecrawl_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [25912]
+INFO:     Started server process [25961]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+🚀 GEO Content Engine API starting...
+DEBUG: list_projects fetched 12 projects for user None
+INFO:     127.0.0.1:58532 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 12 projects for user None
+INFO:     127.0.0.1:58532 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 12 projects for user None
+INFO:     127.0.0.1:58598 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 12 projects for user None
+INFO:     127.0.0.1:58532 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 12 projects for user None
+INFO:     127.0.0.1:58598 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 12 projects for user None
+INFO:     127.0.0.1:58850 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 12 projects for user None
+INFO:     127.0.0.1:59041 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 12 projects for user None
+INFO:     127.0.0.1:59051 - "GET /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59128 - "OPTIONS /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 12 projects for user None
+INFO:     127.0.0.1:59128 - "GET /api/projects/ HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'setup_db.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [25961]
+INFO:     Started server process [26140]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/routers/projects.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [26140]
+INFO:     Started server process [26145]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/routers/intelligence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [26145]
+INFO:     Started server process [26146]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+🚀 GEO Content Engine API starting...
+DEBUG: create_project request for user_id: 00000000-0000-0000-0000-000000000000, name: Test Project 123
+INFO:     127.0.0.1:59364 - "POST /api/projects/ HTTP/1.1" 200 OK
+OpenAI Service initialized with Key: sk-proj-...nQIA
+Perplexity Service initialized with Key: pplx-dje...
+Scraping URL: https://example.com (Original: example.com)
+Analyzing scraped content length: 167
+INFO:     127.0.0.1:59369 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+Scraping URL: http://example.com (Original: http://example.com)
+Analyzing scraped content length: 167
+INFO:     127.0.0.1:59369 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+Scraping URL: https://example.com (Original: https://example.com)
+Analyzing scraped content length: 167
+INFO:     127.0.0.1:59369 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59369 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'verify_fix.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [26146]
+INFO:     Started server process [26818]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+🚀 GEO Content Engine API starting...
+DEBUG: create_project request for user_id: 00000000-0000-0000-0000-000000000000, name: Test Project 123
+INFO:     127.0.0.1:59436 - "POST /api/projects/ HTTP/1.1" 200 OK
+OpenAI Service initialized with Key: sk-proj-...nQIA
+Perplexity Service initialized with Key: pplx-dje...
+Scraping URL: https://example.com (Original: example.com)
+Analyzing scraped content length: 167
+INFO:     127.0.0.1:59441 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+Scraping URL: http://example.com (Original: http://example.com)
+Analyzing scraped content length: 167
+INFO:     127.0.0.1:59451 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+Scraping URL: https://example.com (Original: https://example.com)
+Analyzing scraped content length: 167
+INFO:     127.0.0.1:59454 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59459 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59939 - "OPTIONS /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:59939 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:59939 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:59990 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:59939 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:59990 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:59939 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:60132 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:60132 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:60132 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:60163 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:60132 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:60180 - "GET /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60711 - "OPTIONS /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:60711 - "GET /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60734 - "OPTIONS /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60734 - "POST /api/auth/login HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:60743 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:60734 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:60743 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:60767 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:60743 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:60767 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:60734 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user None
+INFO:     127.0.0.1:60773 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: create_project request for user_id: None, name: muji
+INFO:     127.0.0.1:60773 - "POST /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60788 - "OPTIONS /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60788 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60788 - "OPTIONS /api/intelligence/analyze-company HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60788 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 17 projects for user None
+INFO:     127.0.0.1:60827 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 17 projects for user None
+INFO:     127.0.0.1:60846 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 17 projects for user None
+INFO:     127.0.0.1:60874 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 17 projects for user None
+INFO:     127.0.0.1:61563 - "GET /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61563 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 15 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:61563 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 15 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:61626 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 15 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:61643 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: create_project request for user_id: 8fb444b4-17e8-4544-a38c-76bd2a229fc8, name: muji
+INFO:     127.0.0.1:61643 - "POST /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:61666 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:61792 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'api/routers/intelligence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [26818]
+INFO:     Started server process [33927]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+🚀 GEO Content Engine API starting...
+OpenAI Service initialized with Key: sk-proj-...nQIA
+Perplexity Service initialized with Key: pplx-dje...
+[SearchService] === Starting 3-step competitor discovery for 'AI Project Management Tools' ===
+[SearchService] Step 1: Discovering candidates...
+[SearchService] Perplexity returned 3056 chars, 8 citations
+[SearchService] Step 1 found 14 candidates: ['Wrike', 'ClickUp', 'Asana', 'monday.com', 'Zapier', 'Motion', 'Hive', 'Taskade', 'Notion', 'Forecast', 'Timely', 'Zoho Projects', 'Ayanza', 'Smartsheet']
+[SearchService] Step 2: Validating via AI citation testing...
+[SearchService] Running 5 validation queries...
+INFO:     127.0.0.1:63891 - "POST /api/publishing/publish HTTP/1.1" 200 OK
+  [Wrike] mentions=3/5, citations=2/5, score=54%
+  [ClickUp] mentions=4/5, citations=0/5, score=56%
+  [Asana] mentions=4/5, citations=0/5, score=56%
+  [monday.com] mentions=4/5, citations=0/5, score=56%
+  [Zapier] mentions=3/5, citations=2/5, score=54%
+  [Motion] mentions=2/5, citations=1/5, score=34%
+  [Hive] mentions=1/5, citations=0/5, score=14%
+  [Taskade] mentions=2/5, citations=0/5, score=28%
+  [Notion] mentions=2/5, citations=0/5, score=28%
+  [Forecast] mentions=2/5, citations=0/5, score=28%
+  [Timely] mentions=0/5, citations=0/5, score=0%
+  [Zoho Projects] mentions=0/5, citations=0/5, score=0%
+  [Ayanza] mentions=0/5, citations=0/5, score=0%
+  [Smartsheet] mentions=3/5, citations=0/5, score=42%
+[SearchService] Step 2 validated 14 competitors
+[SearchService] Step 3: Scoring and filtering...
+[SearchService] === Pipeline complete: returning 7 items ===
+  - ClickUp : score=56%, citations=4
+  - Asana : score=56%, citations=4
+  - monday.com : score=56%, citations=4
+  - Wrike : score=54%, citations=5
+  - Zapier : score=54%, citations=5
+  - Smartsheet : score=42%, citations=3
+  - Motion : score=34%, citations=3
+[SearchService] === Starting 3-step competitor discovery for 'AI Project Management Tools' ===
+[SearchService] Step 1: Discovering candidates...
+[SearchService] Perplexity returned 1614 chars, 7 citations
+INFO:     127.0.0.1:64273 - "POST /api/publishing/publish HTTP/1.1" 200 OK
+[SearchService] Step 1 found 15 candidates: ['Wrike', 'Asana', 'ClickUp', 'monday.com', 'Zapier', 'Motion', 'Taskade', 'Forecast', 'Zoho Projects', 'Jira', 'Hive', 'Smartsheet', 'Microsoft Project', 'Basecamp', 'Coda']
+[SearchService] Step 2: Validating via AI citation testing...
+[SearchService] Running 5 validation queries...
+  [Wrike] mentions=4/5, citations=1/5, score=62%
+  [Asana] mentions=4/5, citations=0/5, score=56%
+  [ClickUp] mentions=4/5, citations=0/5, score=56%
+  [monday.com] mentions=4/5, citations=0/5, score=56%
+  [Zapier] mentions=3/5, citations=3/5, score=60%
+  [Motion] mentions=1/5, citations=0/5, score=14%
+  [Taskade] mentions=2/5, citations=0/5, score=28%
+  [Forecast] mentions=2/5, citations=0/5, score=28%
+  [Zoho Projects] mentions=0/5, citations=0/5, score=0%
+  [Jira] mentions=3/5, citations=0/5, score=42%
+  [Hive] mentions=1/5, citations=0/5, score=14%
+  [Smartsheet] mentions=1/5, citations=0/5, score=14%
+  [Microsoft Project] mentions=1/5, citations=0/5, score=14%
+  [Basecamp] mentions=0/5, citations=0/5, score=0%
+  [Coda] mentions=0/5, citations=0/5, score=0%
+[SearchService] Step 2 validated 15 competitors
+[SearchService] Step 3: Scoring and filtering...
+[SearchService] === Pipeline complete: returning 6 items ===
+  - Wrike : score=62%, citations=5
+  - Zapier : score=60%, citations=6
+  - Asana : score=56%, citations=4
+  - ClickUp : score=56%, citations=4
+  - monday.com : score=56%, citations=4
+  - Jira : score=42%, citations=3
+INFO:     127.0.0.1:64655 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:64655 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:64667 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64686 - "OPTIONS /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 18 projects for user None
+INFO:     127.0.0.1:64686 - "GET /api/projects/ HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:64704 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64686 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64709 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64711 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64712 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:64686 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:64712 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:64686 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 16 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:64712 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 17 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:64926 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 17 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:64968 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 17 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:64968 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 17 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:64997 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 17 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:64968 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65009 - "OPTIONS /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65009 - "POST /api/auth/login HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 17 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:65009 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 17 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:65100 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65100 - "POST /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65153 - "OPTIONS /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65153 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65153 - "OPTIONS /api/intelligence/analyze-company HTTP/1.1" 200 OK
+Scraping URL: https://
+Scrape failed or empty: Bad Request: Failed to scrape. Bad Request - [{'code': 'invalid_format', 'format': 'url', 'path': ['url'], 'message': 'Invalid URL'}, {'code': 'custom', 'path': ['url'], 'message': 'URL must have a valid top-level domain or be a valid path'}, {'code': 'custom', 'path': ['url'], 'message': 'Invalid URL'}]
+INFO:     127.0.0.1:65153 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 18 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:65325 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 18 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:65332 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65332 - "GET /api/health HTTP/1.1" 200 OK
+Scraping URL: https://
+Scrape failed or empty: Bad Request: Failed to scrape. Bad Request - [{'code': 'invalid_format', 'format': 'url', 'path': ['url'], 'message': 'Invalid URL'}, {'code': 'custom', 'path': ['url'], 'message': 'URL must have a valid top-level domain or be a valid path'}, {'code': 'custom', 'path': ['url'], 'message': 'Invalid URL'}]
+INFO:     127.0.0.1:65332 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 18 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:65372 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65372 - "GET /api/health HTTP/1.1" 200 OK
+Scraping URL: https://
+Scrape failed or empty: Bad Request: Failed to scrape. Bad Request - [{'code': 'invalid_format', 'format': 'url', 'path': ['url'], 'message': 'Invalid URL'}, {'code': 'custom', 'path': ['url'], 'message': 'URL must have a valid top-level domain or be a valid path'}, {'code': 'custom', 'path': ['url'], 'message': 'Invalid URL'}]
+INFO:     127.0.0.1:65372 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+Scraping URL: https://
+Scrape failed or empty: Bad Request: Failed to scrape. Bad Request - [{'code': 'invalid_format', 'format': 'url', 'path': ['url'], 'message': 'Invalid URL'}, {'code': 'custom', 'path': ['url'], 'message': 'URL must have a valid top-level domain or be a valid path'}, {'code': 'custom', 'path': ['url'], 'message': 'Invalid URL'}]
+INFO:     127.0.0.1:65378 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65378 - "OPTIONS /api/intelligence/generate-profile HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65378 - "POST /api/intelligence/generate-profile HTTP/1.1" 422 Unprocessable Entity
+DEBUG: list_projects fetched 18 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:65407 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 18 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:65407 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 18 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:65421 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 18 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:65445 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 18 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:49229 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 18 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:49234 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 18 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:49252 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50146 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 18 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:50146 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 18 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51081 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 18 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51081 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 18 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51120 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 18 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51081 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51081 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51120 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 18 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51081 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 18 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51120 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51126 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 18 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51126 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 18 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51158 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51158 - "OPTIONS /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51158 - "POST /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51172 - "OPTIONS /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51172 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51172 - "OPTIONS /api/intelligence/analyze-company HTTP/1.1" 200 OK
+Scraping URL: https://
+Scrape failed or empty: Bad Request: Failed to scrape. Bad Request - [{'code': 'invalid_format', 'format': 'url', 'path': ['url'], 'message': 'Invalid URL'}, {'code': 'custom', 'path': ['url'], 'message': 'URL must have a valid top-level domain or be a valid path'}, {'code': 'custom', 'path': ['url'], 'message': 'Invalid URL'}]
+INFO:     127.0.0.1:51172 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 19 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51235 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 19 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51257 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 19 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51262 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 19 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51257 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 19 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51279 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 19 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51289 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 19 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51293 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 19 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51289 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 19 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51362 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 19 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51431 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51478 - "POST /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51508 - "GET /api/health HTTP/1.1" 200 OK
+Scraping URL: https://
+Scrape failed or empty: Bad Request: Failed to scrape. Bad Request - [{'code': 'invalid_format', 'format': 'url', 'path': ['url'], 'message': 'Invalid URL'}, {'code': 'custom', 'path': ['url'], 'message': 'URL must have a valid top-level domain or be a valid path'}, {'code': 'custom', 'path': ['url'], 'message': 'Invalid URL'}]
+INFO:     127.0.0.1:51508 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'api/routers/intelligence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [33927]
+INFO:     Started server process [36712]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'api/services/firecrawl_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [36712]
+INFO:     Started server process [36719]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+🚀 GEO Content Engine API starting...
+DEBUG: list_projects fetched 20 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51897 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 20 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51897 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 20 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51926 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 20 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51897 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 20 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:51935 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51935 - "POST /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51980 - "GET /api/health HTTP/1.1" 200 OK
+OpenAI Service initialized with Key: sk-proj-...nQIA
+Perplexity Service initialized with Key: pplx-dje...
+INFO:     127.0.0.1:51980 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 21 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52016 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 21 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52016 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 21 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52016 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 21 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52055 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52055 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52055 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 21 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52055 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 21 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52070 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 21 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52055 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52371 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 21 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52371 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52371 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52401 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52403 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 21 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52371 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 21 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52401 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 21 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52403 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 21 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52416 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 21 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52416 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52416 - "OPTIONS /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52416 - "POST /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52464 - "OPTIONS /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52464 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52464 - "OPTIONS /api/intelligence/analyze-company HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52464 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 22 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52530 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 22 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52536 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 22 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52530 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 22 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52687 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 22 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52870 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 22 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52876 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 22 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52870 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 22 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:52886 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52886 - "POST /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52934 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52934 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'api/index.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [36719]
+Process SpawnProcess-52:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/_compat.py", line 60, in asyncio_run
+    return loop.run_until_complete(main)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/base_events.py", line 642, in run_until_complete
+    return future.result()
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 850, in exec_module
+  File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/index.py", line 42, in <module>
+    async def log_requests(request: Request, call_next):
+NameError: name 'Request' is not defined
+WARNING:  StatReload detected changes in 'api/index.py'. Reloading...
+INFO:     Started server process [42259]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+🚀 GEO Content Engine API starting...
+INFO:     127.0.0.1:53882 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53884 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53886 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 23 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+DEBUG: list_projects fetched 23 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:53886 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53884 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 23 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:53893 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 23 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:53932 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53932 - "OPTIONS /api/projects/ HTTP/1.1" 200 OK
+[POST] /api/projects/ - Body: {"name":"muji","domain":"https://www.muji.com/","user_id":"8fb444b4-17e8-4544-a38c-76bd2a229fc8"}...
+INFO:     127.0.0.1:53932 - "POST /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54161 - "OPTIONS /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54161 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54161 - "OPTIONS /api/intelligence/analyze-company HTTP/1.1" 200 OK
+[POST] /api/intelligence/analyze-company - Body: {"url":"https://"}...
+OpenAI Service initialized with Key: sk-proj-...nQIA
+Perplexity Service initialized with Key: pplx-dje...
+INFO:     127.0.0.1:54163 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54564 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54566 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54568 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 24 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+DEBUG: list_projects fetched 24 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:54568 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54566 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 24 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:54564 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 24 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:54564 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 24 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:54605 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+[POST] /api/projects/ - Body: {"name":"Muji","domain":"https://www.muji.com","user_id":"8fb444b4-17e8-4544-a38c-76bd2a229fc8"}...
+INFO:     127.0.0.1:54605 - "POST /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54631 - "OPTIONS /api/projects/undefined HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54632 - "GET /api/health HTTP/1.1" 200 OK
+Error updating project undefined: {'message': 'invalid input syntax for type uuid: "undefined"', 'code': '22P02', 'hint': None, 'details': None}
+INFO:     127.0.0.1:54631 - "PUT /api/projects/undefined HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/routers/projects.py", line 75, in update_project
+    raise HTTPException(status_code=404, detail="Project not found")
+fastapi.exceptions.HTTPException: 404: Project not found
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/protocols/http/h11_impl.py", line 409, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/base.py", line 196, in __call__
+    recv_stream.close()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/contextlib.py", line 135, in __exit__
+    self.gen.throw(type, value, traceback)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/index.py", line 59, in log_requests
+    response = await call_next(request)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 59, in wrapped_app
+    response = await handler(conn, exc)
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/index.py", line 91, in http_exception_handler
+    return JSONResponse(
+NameError: name 'JSONResponse' is not defined
+[POST] /api/intelligence/analyze-company - Body: {"url":"https://www.muji.com"}...
+Scraping Normalized URL: 'https://www.muji.com'
+Analyzing scraped content length: 3092
+INFO:     127.0.0.1:54632 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 25 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:54775 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 25 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:54775 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 25 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:54782 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 25 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:54775 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 25 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:54963 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 25 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:54976 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 25 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:55005 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55005 - "OPTIONS /api/projects/ HTTP/1.1" 200 OK
+[POST] /api/projects/ - Body: {"name":"muji","domain":"https://www.muji.com","user_id":"8fb444b4-17e8-4544-a38c-76bd2a229fc8"}...
+INFO:     127.0.0.1:55005 - "POST /api/projects/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55065 - "GET /api/health HTTP/1.1" 200 OK
+Error updating project undefined: {'message': 'invalid input syntax for type uuid: "undefined"', 'code': '22P02', 'hint': None, 'details': None}
+INFO:     127.0.0.1:55064 - "PUT /api/projects/undefined HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/routers/projects.py", line 75, in update_project
+    raise HTTPException(status_code=404, detail="Project not found")
+fastapi.exceptions.HTTPException: 404: Project not found
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/protocols/http/h11_impl.py", line 409, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/base.py", line 196, in __call__
+    recv_stream.close()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/contextlib.py", line 135, in __exit__
+    self.gen.throw(type, value, traceback)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/index.py", line 59, in log_requests
+    response = await call_next(request)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 59, in wrapped_app
+    response = await handler(conn, exc)
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/index.py", line 91, in http_exception_handler
+    return JSONResponse(
+NameError: name 'JSONResponse' is not defined
+[POST] /api/intelligence/analyze-company - Body: {"url":"https://www.muji.com"}...
+Scraping Normalized URL: 'https://www.muji.com'
+Analyzing scraped content length: 3092
+INFO:     127.0.0.1:55065 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55191 - "OPTIONS /api/intelligence/discover-competitors HTTP/1.1" 200 OK
+[POST] /api/intelligence/discover-competitors - Body: {"niche":"家居品牌"}...
+[SearchService] === Starting 3-step competitor discovery for '家居品牌' ===
+[SearchService] Step 1: Discovering candidates...
+[SearchService] Perplexity returned 1900 chars, 5 citations
+[SearchService] Step 1 found 14 candidates: ['金牌家居', '志邦家居', '欧派家居', '我乐家居', '尚品宅配', '玛格家居', '顶固集创', '顾家家居', '林氏家居', '源氏木语', 'Yeelight易来', '索菲亚家居', '皮阿诺家居', '箭牌家居']
+[SearchService] Step 2: Validating via AI citation testing...
+[SearchService] Running 5 validation queries...
+  [金牌家居] mentions=1/5, citations=0/5, score=14%
+  [志邦家居] mentions=1/5, citations=0/5, score=14%
+  [欧派家居] mentions=0/5, citations=0/5, score=0%
+  [我乐家居] mentions=0/5, citations=0/5, score=0%
+  [尚品宅配] mentions=0/5, citations=0/5, score=0%
+  [玛格家居] mentions=0/5, citations=0/5, score=0%
+  [顶固集创] mentions=0/5, citations=0/5, score=0%
+  [顾家家居] mentions=1/5, citations=0/5, score=14%
+  [林氏家居] mentions=0/5, citations=0/5, score=0%
+  [源氏木语] mentions=0/5, citations=0/5, score=0%
+  [Yeelight易来] mentions=0/5, citations=0/5, score=0%
+  [索菲亚家居] mentions=0/5, citations=0/5, score=0%
+  [皮阿诺家居] mentions=0/5, citations=0/5, score=0%
+  [箭牌家居] mentions=0/5, citations=0/5, score=0%
+[SearchService] Step 2 validated 14 competitors
+[SearchService] Step 3: Scoring and filtering...
+[SearchService] Only 0 passed 30% threshold, taking top 5 by score
+[SearchService] === Pipeline complete: returning 5 items ===
+  - 金牌家居 : score=14%, citations=1
+  - 志邦家居 : score=14%, citations=1
+  - 顾家家居 : score=14%, citations=1
+  - 欧派家居 : score=0%, citations=0
+  - 我乐家居 : score=0%, citations=0
+INFO:     127.0.0.1:55191 - "POST /api/intelligence/discover-competitors HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55191 - "OPTIONS /api/intelligence/analyze-company HTTP/1.1" 200 OK
+[POST] /api/intelligence/analyze-company - Body: {"url":"https://www.muji.com"}...
+Scraping Normalized URL: 'https://www.muji.com'
+Analyzing scraped content length: 3092
+INFO:     127.0.0.1:55191 - "POST /api/intelligence/analyze-company HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55191 - "OPTIONS /api/intelligence/generate-profile HTTP/1.1" 200 OK
+[POST] /api/intelligence/generate-profile - Body: {"scraped_content":{"success":true,"url":"https://www.muji.com","company_profile":{"company_name":"Ryohin Keikaku Co., Ltd.","industry":"Retail","products_services":["Home goods","Stationery","Clothing","Food products"],"target_audience":["General consumers","Individuals seeking quality home and lifestyle products"],"unique_selling_points":["Minimalist design","High-quality materials","Diverse product range"],"key_features":["In-store and online shopping options","Wide geographic presence across...
+INFO:     127.0.0.1:55560 - "POST /api/intelligence/generate-profile HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:55840 - "OPTIONS /api/intelligence/discover-hidden-competitors HTTP/1.1" 200 OK
+[POST] /api/intelligence/discover-hidden-competitors - Body: {"company_profile":{"company_name":"Ryohin Keikaku Co., Ltd.","industry":"Retail","products_services":["Home goods","Stationery","Clothing","Food products"],"target_audience":["General consumers","Individuals seeking quality home and lifestyle products"],"unique_selling_points":["Minimalist design","High-quality materials","Diverse product range"],"key_features":["In-store and online shopping options","Wide geographic presence across regions"]}}...
+INFO:     127.0.0.1:55840 - "POST /api/intelligence/discover-hidden-competitors HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55840 - "OPTIONS /api/intelligence/analyze-competitor HTTP/1.1" 200 OK
+[POST] /api/intelligence/analyze-competitor - Body: {"company_profile":{"industry":"零售业","region":"全球","targetAudience":"喜欢极简风的人群","productName":"muji","uniqueSellingPoint":"","landingPage":"https://www.muji.com"},"competitor_urls":["https://www.goldenhome.com.cn","https://www.zbom.com.cn","https://www.kuka.com.cn","https://www.oppeinhome.com","https://www.aile.com.cn"]}...
+[GapAnalysis] Scraping competitor: https://www.goldenhome.com.cn
+Firecrawl Scrape Error for https://www.goldenhome.com.cn: DNS resolution failed for hostname "www.goldenhome.com.cn". This means the domain name could not be translated to an IP address. Possible causes: (1) The domain name is misspelled (check for typos), (2) The domain does not exist or has expired, (3) The DNS servers are temporarily unavailable, or (4) The domain was recently registered and DNS has not propagated yet. Please verify the URL is correct and the website exists.
+[GapAnalysis] Scraping competitor: https://www.zbom.com.cn
+Firecrawl Scrape Error for https://www.zbom.com.cn: DNS resolution failed for hostname "www.zbom.com.cn". This means the domain name could not be translated to an IP address. Possible causes: (1) The domain name is misspelled (check for typos), (2) The domain does not exist or has expired, (3) The DNS servers are temporarily unavailable, or (4) The domain was recently registered and DNS has not propagated yet. Please verify the URL is correct and the website exists.
+[GapAnalysis] Scraping competitor: https://www.kuka.com.cn
+Firecrawl Scrape Error for https://www.kuka.com.cn: Internal Server Error: Failed to scrape. The URL failed to load in the browser with error code "ERR_TIMED_OUT". The connection timed out. The server is not responding or is too slow. Please verify the URL is correct and the website is accessible. - No additional error details provided.
+INFO:     127.0.0.1:55840 - "POST /api/intelligence/analyze-competitor HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56046 - "OPTIONS /api/intelligence/generate-keywords-enhanced HTTP/1.1" 200 OK
+[POST] /api/intelligence/generate-keywords-enhanced - Body: {"niche":"零售业","domain":"","profile":{"industry":"零售业","region":"全球","targetAudience":"喜欢极简风的人群","productName":"muji","uniqueSellingPoint":"","landingPage":"https://www.muji.com"},"gap_report":{"success":true,"competitors_analyzed":0,"our_site_scraped":false,"competitor_data":[{"url":"https://www.goldenhome.com.cn","error":"DNS resolution failed for hostname \"www.goldenhome.com.cn\". This means the domain name could not be translated to an IP address. Possible causes: (1) The domain name is mis...
+SEO Service initialized with SerpApi Key: eyJhbGci...
+[Keywords] Generating User Search Simulation queries...
+[Keywords] Simulated queries: ['适合极简风家居的muji收纳产品推荐', 'muji与宜家家居风格对比，哪个更适合极简主义者', '如何在muji找到适合办公室的简约文具', 'muji旅行收纳袋使用心得和评价', '适合送给喜欢极简风格朋友的muji商品推荐']
+[Keywords] Discovering SERP keywords for: 零售业 (Custom Queries: 5)
+[SEO] Using 5 custom simulation queries
+[SEO] SerpApi error for '适合极简风家居的muji收纳产品推荐': 401
+[SEO] SerpApi error for 'muji与宜家家居风格对比，哪个更适合极简主义者': 401
+[SEO] SerpApi error for '如何在muji找到适合办公室的简约文具': 401
+[SEO] SerpApi error for 'muji旅行收纳袋使用心得和评价': 401
+[SEO] SerpApi error for '适合送给喜欢极简风格朋友的muji商品推荐': 401
+[SEO] Discovered 0 keywords from 5 SERP queries
+[Keywords] Got 0 SERP keywords
+[Keywords] Extracted 5 competitor gap keywords
+[Keywords] Generating AI brand keywords...
+[Keywords] Generated 9 AI keywords
+[Keywords] Filtering out competitor brands: {'oppeinhome', 'zbom', 'kuka', 'goldenhome', 'aile'}
+[Keywords] Total: 14 → Unique: 14
+INFO:     127.0.0.1:56046 - "POST /api/intelligence/generate-keywords-enhanced HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56129 - "OPTIONS /api/production/generate-titles HTTP/1.1" 200 OK
+[POST] /api/production/generate-titles - Body: {"topic":"极简风","niche":"零售业","profile":{"industry":"零售业","region":"全球","targetAudience":"喜欢极简风的人群","productName":"muji","uniqueSellingPoint":"","landingPage":"https://www.muji.com"},"use_trends":true}...
+[Production] Fetching trends for title generation: 零售业
+INFO:     127.0.0.1:56129 - "POST /api/production/generate-titles HTTP/1.1" 200 OK
+[POST] /api/production/generate-titles - Body: {"topic":"极简风购物清单","niche":"零售业","profile":{"industry":"零售业","region":"全球","targetAudience":"喜欢极简风的人群","productName":"muji","uniqueSellingPoint":"","landingPage":"https://www.muji.com"},"use_trends":true}...
+[Production] Fetching trends for title generation: 零售业
+INFO:     127.0.0.1:56129 - "POST /api/production/generate-titles HTTP/1.1" 200 OK
+[POST] /api/production/generate-titles - Body: {"topic":"什么是极简主义设计","niche":"零售业","profile":{"industry":"零售业","region":"全球","targetAudience":"喜欢极简风的人群","productName":"muji","uniqueSellingPoint":"","landingPage":"https://www.muji.com"},"use_trends":true}...
+[Production] Fetching trends for title generation: 零售业
+INFO:     127.0.0.1:56129 - "POST /api/production/generate-titles HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56292 - "OPTIONS /api/projects/undefined/tasks/batch HTTP/1.1" 200 OK
+[POST] /api/projects/undefined/tasks/batch - Body: [{"id":"TASK-qk1see","batchId":"BATCH-1771143381848","branch":"Article","type":"深度文章","title":"极简风的背后：如何通过设计增强消费者信任","genStatus":"Pending","pubStatus":"Pending","timestamp":1771143381848,"selected":false,"profile":{"industry":"零售业","region":"全球","targetAudience":"喜欢极简风的人群","productName":"muji","uniqueSellingPoint":"","landingPage":"https://www.muji.com"}},{"id":"TASK-xr6sa3","batchId":"BATCH-1771143381848","branch":"Article","type":"深度文章","title":"为什么极简风是今日零售的新标准？","genStatus":"Pending","pubStat...
+Error creating task: {'message': 'invalid input syntax for type uuid: "TASK-qk1see"', 'code': '22P02', 'hint': None, 'details': None}
+Error creating task: {'message': 'invalid input syntax for type uuid: "TASK-xr6sa3"', 'code': '22P02', 'hint': None, 'details': None}
+Error creating task: {'message': 'invalid input syntax for type uuid: "TASK-7xcxpo"', 'code': '22P02', 'hint': None, 'details': None}
+Error creating task: {'message': 'invalid input syntax for type uuid: "TASK-sqiih4"', 'code': '22P02', 'hint': None, 'details': None}
+INFO:     127.0.0.1:56292 - "POST /api/projects/undefined/tasks/batch HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56298 - "OPTIONS /api/production/generate-single HTTP/1.1" 200 OK
+[POST] /api/production/generate-single - Body: {"title":"极简风的背后：如何通过设计增强消费者信任","content_type":"Article","keyword":"极简风的背后：如何通过设计增强消费者信任","profile":{"industry":"零售业","region":"全球","targetAudience":"喜欢极简风的人群","productName":"muji","uniqueSellingPoint":"","landingPage":"https://www.muji.com"}}...
+[Production] Conducting deep research for: 极简风的背后：如何通过设计增强消费者信任
+INFO:     127.0.0.1:56298 - "POST /api/production/generate-single HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56298 - "OPTIONS /api/projects/tasks/TASK-qk1see HTTP/1.1" 200 OK
+Error updating task: {'message': 'invalid input syntax for type uuid: "TASK-qk1see"', 'code': '22P02', 'hint': None, 'details': None}
+INFO:     127.0.0.1:56298 - "PATCH /api/projects/tasks/TASK-qk1see HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/routers/projects.py", line 186, in update_task_status
+    raise HTTPException(status_code=404, detail="Task not found")
+fastapi.exceptions.HTTPException: 404: Task not found
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/protocols/http/h11_impl.py", line 409, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/base.py", line 196, in __call__
+    recv_stream.close()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/contextlib.py", line 135, in __exit__
+    self.gen.throw(type, value, traceback)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/index.py", line 59, in log_requests
+    response = await call_next(request)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 59, in wrapped_app
+    response = await handler(conn, exc)
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/index.py", line 91, in http_exception_handler
+    return JSONResponse(
+NameError: name 'JSONResponse' is not defined
+[POST] /api/production/generate-single - Body: {"title":"为什么极简风是今日零售的新标准？","content_type":"Article","keyword":"为什么极简风是今日零售的新标准？","profile":{"industry":"零售业","region":"全球","targetAudience":"喜欢极简风的人群","productName":"muji","uniqueSellingPoint":"","landingPage":"https://www.muji.com"}}...
+[Production] Conducting deep research for: 为什么极简风是今日零售的新标准？
+INFO:     127.0.0.1:56349 - "POST /api/production/generate-single HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56349 - "OPTIONS /api/projects/tasks/TASK-xr6sa3 HTTP/1.1" 200 OK
+Error updating task: {'message': 'invalid input syntax for type uuid: "TASK-xr6sa3"', 'code': '22P02', 'hint': None, 'details': None}
+INFO:     127.0.0.1:56349 - "PATCH /api/projects/tasks/TASK-xr6sa3 HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/routers/projects.py", line 186, in update_task_status
+    raise HTTPException(status_code=404, detail="Task not found")
+fastapi.exceptions.HTTPException: 404: Task not found
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/protocols/http/h11_impl.py", line 409, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/base.py", line 196, in __call__
+    recv_stream.close()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/contextlib.py", line 135, in __exit__
+    self.gen.throw(type, value, traceback)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_utils.py", line 85, in collapse_excgroups
+    raise exc
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/index.py", line 59, in log_requests
+    response = await call_next(request)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/starlette/_exception_handler.py", line 59, in wrapped_app
+    response = await handler(conn, exc)
+  File "/Users/charliewu/Downloads/geo-content-engine (1)/api/index.py", line 91, in http_exception_handler
+    return JSONResponse(
+NameError: name 'JSONResponse' is not defined
+[POST] /api/production/generate-single - Body: {"title":"你绝对不能错过的极简风零售品牌","content_type":"Social","keyword":"你绝对不能错过的极简风零售品牌","profile":{"industry":"零售业","region":"全球","targetAudience":"喜欢极简风的人群","productName":"muji","uniqueSellingPoint":"","landingPage":"https://www.muji.com"}}...
+[Production] Searching social trends for: 零售业
+INFO:     127.0.0.1:56459 - "OPTIONS /api/projects/tasks/TASK-7xcxpo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56459 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 26 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:56459 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 26 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:56475 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 26 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:56459 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 26 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:56512 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 26 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:56512 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 26 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:56688 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49278 - "OPTIONS /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+DEBUG: list_projects fetched 26 projects for user 8fb444b4-17e8-4544-a38c-76bd2a229fc8
+INFO:     127.0.0.1:49278 - "GET /api/projects/?user_id=8fb444b4-17e8-4544-a38c-76bd2a229fc8 HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'api/routers/intelligence.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [42259]
+Process SpawnProcess-54:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 73, in subprocess_started
+    sys.stdin = os.fdopen(stdin_fileno)  # pragma: full coverage
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/os.py", line 1023, in fdopen
+    return io.open(fd, *args, **kwargs)
+OSError: [Errno 9] Bad file descriptor
+WARNING:  StatReload detected changes in 'api/routers/intelligence.py'. Reloading...
+Process SpawnProcess-55:
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/Users/charliewu/Library/Python/3.9/lib/python/site-packages/uvicorn/_subprocess.py", line 73, in subprocess_started
+    sys.stdin = os.fdopen(stdin_fileno)  # pragma: full coverage
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/os.py", line 1023, in fdopen
+    return io.open(fd, *args, **kwargs)
+OSError: [Errno 9] Bad file descriptor

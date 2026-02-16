@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, HttpUrl
 from typing import Optional, List, Dict, Any
 from api.services.firecrawl_service import get_firecrawl_service
+from api.services.supabase_service import get_supabase_service
 
 router = APIRouter()
 
@@ -13,12 +14,16 @@ router = APIRouter()
 class ScrapeRequest(BaseModel):
     url: str
     formats: List[str] = ["markdown", "html"]
+    project_id: Optional[str] = None
+    save_to_db: bool = False
 
 class CrawlRequest(BaseModel):
     url: str
     max_pages: int = 10
     include_paths: Optional[List[str]] = None
     exclude_paths: Optional[List[str]] = None
+    project_id: Optional[str] = None
+    save_to_db: bool = False
 
 class MapRequest(BaseModel):
     url: str
@@ -40,11 +45,24 @@ async def scrape_url(request: ScrapeRequest):
     - Extract specific page content for analysis
     """
     service = get_firecrawl_service()
+    db = get_supabase_service()
+
     result = await service.scrape_url(request.url, request.formats)
     
     if not result["success"]:
         raise HTTPException(status_code=400, detail=result["error"])
-    
+
+    # Save single page to KB
+    if request.save_to_db and request.project_id:
+        data = result.get("data", {})
+        page_data = {
+            "url": request.url,
+            "content": data.get("markdown", "") if isinstance(data, dict) else getattr(data, 'markdown', ''),
+            "metadata": data.get("metadata", {}) if isinstance(data, dict) else getattr(data, 'metadata', {})
+        }
+        await db.save_crawl_result(request.project_id, page_data)
+        result["saved_to_kb"] = True
+
     return result
 
 
@@ -58,6 +76,9 @@ async def crawl_website(request: CrawlRequest):
     - Gather all content pages for gap analysis
     """
     service = get_firecrawl_service()
+    db = get_supabase_service()
+    
+    # 1. Execute Crawl
     result = await service.crawl_website(
         request.url,
         request.max_pages,
@@ -68,6 +89,31 @@ async def crawl_website(request: CrawlRequest):
     if not result["success"]:
         raise HTTPException(status_code=400, detail=result["error"])
     
+    # 2. Save to Knowledge Base (DB) if requested
+    if request.save_to_db and request.project_id:
+        print(f"saving crawl results for project {request.project_id}")
+        data = result.get("data", {})
+        # If firecrawl returns a list of pages in 'data'
+        pages = []
+        if hasattr(data, 'data'):
+             pages = data.data
+        elif isinstance(data, list):
+             pages = data
+        
+        saved_count = 0
+        for page in pages:
+            # Normalized page object
+            page_data = {
+                "url": page.get("metadata", {}).get("sourceURL", request.url),
+                "content": page.get("markdown", "") or page.get("content", ""),
+                "metadata": page.get("metadata", {})
+            }
+            await db.save_crawl_result(request.project_id, page_data)
+            saved_count += 1
+        
+        result["saved_to_kb"] = True
+        result["saved_count"] = saved_count
+        
     return result
 
 

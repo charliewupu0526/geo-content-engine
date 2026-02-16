@@ -1,15 +1,15 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { Project, KeywordItem, ContentBranch } from '../types';
-import { generateProductionMatrix } from '../services/geminiService';
-import { 
-  Zap, 
-  Layers, 
-  FileText, 
-  Smartphone, 
-  CheckCircle2, 
-  ArrowRight, 
-  Loader2, 
+import { generateProductionMatrix, generateBatchContent, publishContent, regenerateContent, generateViralTitles } from '../services/geminiService';
+import {
+  Zap,
+  Layers,
+  FileText,
+  Smartphone,
+  CheckCircle2,
+  ArrowRight,
+  Loader2,
   Hash,
   LayoutGrid,
   Sparkles,
@@ -19,36 +19,65 @@ import {
   X,
   Edit3,
   Check,
-  Filter
+  Filter,
+  Share2,
+  Globe,
+  Twitter,
+  Linkedin,
+  RefreshCw
 } from 'lucide-react';
 
 interface Props {
   activeProject: Project | null;
   report: any | null;
+  keywords?: KeywordItem[];
   onStartTasks: (tasks: any[]) => void;
+  onBack?: () => void;
 }
 
-const ProductionView: React.FC<Props> = ({ activeProject, report, onStartTasks }) => {
-  const [step, setStep] = useState<'setup' | 'selection'>('setup');
+const ProductionView: React.FC<Props> = ({ activeProject, report, keywords = [], onStartTasks, onBack }) => {
+  const [step, setStep] = useState<'setup' | 'selection' | 'production'>('setup');
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
   const [selectedBranches, setSelectedBranches] = useState<ContentBranch[]>(['Article']);
   const [matrix, setMatrix] = useState<any[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isReady, setIsReady] = useState(false);
-  
+  const [generatedContent, setGeneratedContent] = useState<Record<string, { content: string, image?: string }>>({});
+
   // 搜索与过滤
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('All');
-  
+
   // 编辑弹窗
   const [editingItem, setEditingItem] = useState<any | null>(null);
 
+  // 发布弹窗
+  const [publishingItem, setPublishingItem] = useState<any | null>(null);
+  const [publishConfig, setPublishConfig] = useState({ url: '', username: '', appPassword: '' });
+  const [publishingStatus, setPublishingStatus] = useState<string>('');
+
+  // 重生成弹窗
+  const [regeneratingItem, setRegeneratingItem] = useState<any | null>(null);
+  const [regenerationFeedback, setRegenerationFeedback] = useState('');
+  const [isRegeneratingContent, setIsRegeneratingContent] = useState(false);
+
   useEffect(() => {
-    if (report?.missingKeywords) {
+    // Priority: keywords prop with 'selected' state
+    if (keywords && keywords.length > 0) {
+      // Filter for keywords that were selected in the previous screen
+      const userSelected = keywords.filter(k => k.selected).map(k => k.keyword);
+
+      if (userSelected.length > 0) {
+        setSelectedKeywords(userSelected);
+      } else {
+        // Fallback: if none selected (shouldn't happen with validation), take top 5
+        setSelectedKeywords(keywords.slice(0, 5).map(k => k.keyword));
+      }
+    } else if (report?.missingKeywords) {
       const topKws = report.missingKeywords.flatMap((c: any) => c.keywords).slice(0, 4);
       setSelectedKeywords(topKws);
     }
-  }, [report]);
+  }, [report, keywords]);
 
   const toggleBranch = (branch: ContentBranch) => {
     if (selectedBranches.includes(branch)) {
@@ -62,21 +91,55 @@ const ProductionView: React.FC<Props> = ({ activeProject, report, onStartTasks }
     if (selectedKeywords.length === 0) return alert('请先选择核心关键词');
     setIsGenerating(true);
     setIsReady(false);
-    const data = await generateProductionMatrix(selectedKeywords, selectedBranches, activeProject?.companyProfile);
-    setMatrix(data.map((item: any) => ({ 
-      ...item, 
-      id: Math.random().toString(36).substr(2, 9), 
-      selected: true,
-      estimatedWords: item.estimatedWords || (item.branch === 'Article' ? 2000 : 300)
-    })));
-    setIsGenerating(false);
-    setIsReady(true);
+
+    try {
+      const allTitles: any[] = [];
+      const niche = activeProject?.companyProfile?.industry || 'Technology';
+
+      // Generate titles for each selected keyword
+      for (const keyword of selectedKeywords) {
+        // Use AI to generate viral titles
+        const titles = await generateViralTitles(
+          keyword,
+          niche,
+          activeProject?.companyProfile || {},
+          true // useTrends
+        );
+
+        if (titles && titles.length > 0) {
+          titles.forEach((t: any) => {
+            allTitles.push({
+              id: Math.random().toString(36).substr(2, 9),
+              title: t.title, // AI generated title
+              keyword: keyword,
+              branch: t.style === '深度干货' ? 'Article' : 'Social', // Map style to branch roughly
+              intent: 'Commercial', // Default
+              estimatedWords: t.style === '深度干货' ? 2000 : 500,
+              selected: true,
+              aiData: t // Store full AI data including 'reason' and 'predicted_viral_score'
+            });
+          });
+        } else {
+          // Fallback to template if AI fails
+          const templateTitles = await generateProductionMatrix([keyword], selectedBranches, activeProject?.companyProfile);
+          allTitles.push(...templateTitles.map((t: any) => ({ ...t, id: Math.random().toString(36).substr(2, 9), selected: true })));
+        }
+      }
+
+      setMatrix(allTitles);
+      setIsReady(true);
+    } catch (e) {
+      console.error("Title generation error:", e);
+      alert("标题生成失败，请重试");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const filteredMatrix = useMemo(() => {
     return matrix.filter(item => {
-      const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          item.keyword.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.keyword.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesType = typeFilter === 'All' || item.branch === typeFilter;
       return matchesSearch && matchesType;
     });
@@ -88,6 +151,36 @@ const ProductionView: React.FC<Props> = ({ activeProject, report, onStartTasks }
     setEditingItem(null);
   };
 
+  const handleRegenerate = async () => {
+    if (!regeneratingItem || !regenerationFeedback) return;
+
+    setIsRegeneratingContent(true);
+    try {
+      // Find current content
+      const currentContent = generatedContent[regeneratingItem.title]?.content || "";
+      const contentType = regeneratingItem.branch || "Article";
+
+      const newContent = await regenerateContent(currentContent, regenerationFeedback, contentType);
+
+      // Update state
+      setGeneratedContent(prev => ({
+        ...prev,
+        [regeneratingItem.title]: {
+          ...prev[regeneratingItem.title],
+          content: newContent
+        }
+      }));
+
+      setRegeneratingItem(null);
+      setRegenerationFeedback("");
+    } catch (error) {
+      console.error("Regeneration failed", error);
+      alert("重生成失败，请重试");
+    } finally {
+      setIsRegeneratingContent(false);
+    }
+  };
+
   if (step === 'setup') {
     return (
       <div className="space-y-10 animate-in fade-in duration-700 pb-20">
@@ -96,9 +189,22 @@ const ProductionView: React.FC<Props> = ({ activeProject, report, onStartTasks }
             <div className="w-1.5 h-6 bg-indigo-600 rounded-full"></div>
             <h2 className="text-lg font-black text-slate-900 tracking-tight">选题/分支选择</h2>
           </div>
-          <div className="px-5 py-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-[10px] font-black text-emerald-600 uppercase tracking-widest flex items-center gap-2 shadow-sm">
-            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-            站点连接状态：<span className="text-emerald-500">已就绪 (geektech.io)</span>
+          <div className="flex items-center gap-4">
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                if (onBack) onBack();
+                else alert('请点击左侧菜单返回关键词中心');
+              }}
+              className="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
+            >
+              <ArrowLeft size={14} /> 返回关键词中心
+            </a>
+            <div className="px-5 py-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-[10px] font-black text-emerald-600 uppercase tracking-widest flex items-center gap-2 shadow-sm">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+              站点连接状态：<span className="text-emerald-500">已就绪 (geektech.io)</span>
+            </div>
           </div>
         </div>
 
@@ -120,22 +226,43 @@ const ProductionView: React.FC<Props> = ({ activeProject, report, onStartTasks }
                 </div>
               )}
             </div>
-            
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {report?.missingKeywords?.flatMap((c: any) => c.keywords).map((kw: string) => (
-                <button
-                  key={kw}
-                  onClick={() => setSelectedKeywords(prev => prev.includes(kw) ? prev.filter(k => k !== kw) : [...prev, kw])}
-                  className={`px-6 py-4 rounded-2xl font-bold text-sm transition-all border text-left flex items-center justify-between group ${
-                    selectedKeywords.includes(kw) 
-                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-xl shadow-indigo-500/20' 
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-[400px] overflow-y-auto pr-2">
+              {(keywords && keywords.length > 0) ? (
+                keywords.map((item: KeywordItem) => (
+                  <button
+                    key={item.keyword}
+                    onClick={() => setSelectedKeywords(prev => prev.includes(item.keyword) ? prev.filter(k => k !== item.keyword) : [...prev, item.keyword])}
+                    className={`px-6 py-4 rounded-2xl font-bold text-sm transition-all border text-left flex items-center justify-between group ${selectedKeywords.includes(item.keyword)
+                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-xl shadow-indigo-500/20'
                       : 'bg-slate-50 text-slate-500 border-slate-100 hover:border-indigo-200'
-                  }`}
-                >
-                  <span className="truncate">{kw}</span>
-                  {selectedKeywords.includes(kw) && <Check size={16} />}
-                </button>
-              ))}
+                      }`}
+                  >
+                    <div className="overflow-hidden">
+                      <span className="truncate block">{item.keyword}</span>
+                      <div className="flex gap-2 mt-1">
+                        <span className="text-[9px] uppercase tracking-widest opacity-60 bg-black/10 px-1.5 py-0.5 rounded">{item.source || 'AI'}</span>
+                        {item.serpPosition && <span className="text-[9px] uppercase tracking-widest opacity-60 bg-emerald-400/20 text-emerald-100 px-1.5 py-0.5 rounded">#{item.serpPosition}</span>}
+                      </div>
+                    </div>
+                    {selectedKeywords.includes(item.keyword) && <Check size={16} />}
+                  </button>
+                ))
+              ) : (
+                report?.missingKeywords?.flatMap((c: any) => c.keywords).map((kw: string) => (
+                  <button
+                    key={kw}
+                    onClick={() => setSelectedKeywords(prev => prev.includes(kw) ? prev.filter(k => k !== kw) : [...prev, kw])}
+                    className={`px-6 py-4 rounded-2xl font-bold text-sm transition-all border text-left flex items-center justify-between group ${selectedKeywords.includes(kw)
+                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-xl shadow-indigo-500/20'
+                      : 'bg-slate-50 text-slate-500 border-slate-100 hover:border-indigo-200'
+                      }`}
+                  >
+                    <span className="truncate">{kw}</span>
+                    {selectedKeywords.includes(kw) && <Check size={16} />}
+                  </button>
+                ))
+              )}
             </div>
           </div>
 
@@ -146,11 +273,10 @@ const ProductionView: React.FC<Props> = ({ activeProject, report, onStartTasks }
                 <Sparkles size={14} /> 生成分支选择 (多选)
               </h4>
               <div className="space-y-4 flex-1">
-                <button 
+                <button
                   onClick={() => toggleBranch('Article')}
-                  className={`w-full p-6 rounded-2xl border transition-all flex items-center justify-between group ${
-                    selectedBranches.includes('Article') ? 'bg-indigo-600 border-indigo-500' : 'bg-white/5 border-white/10 opacity-50 hover:opacity-100'
-                  }`}
+                  className={`w-full p-6 rounded-2xl border transition-all flex items-center justify-between group ${selectedBranches.includes('Article') ? 'bg-indigo-600 border-indigo-500' : 'bg-white/5 border-white/10 opacity-50 hover:opacity-100'
+                    }`}
                 >
                   <div className="flex items-center gap-4">
                     <div className={`p-3 rounded-xl ${selectedBranches.includes('Article') ? 'bg-white/20' : 'bg-white/5'}`}>
@@ -162,11 +288,10 @@ const ProductionView: React.FC<Props> = ({ activeProject, report, onStartTasks }
                   </div>
                   {selectedBranches.includes('Article') && <Check size={18} />}
                 </button>
-                <button 
+                <button
                   onClick={() => toggleBranch('Social')}
-                  className={`w-full p-6 rounded-2xl border transition-all flex items-center justify-between group ${
-                    selectedBranches.includes('Social') ? 'bg-indigo-600 border-indigo-500' : 'bg-white/5 border-white/10 opacity-50 hover:opacity-100'
-                  }`}
+                  className={`w-full p-6 rounded-2xl border transition-all flex items-center justify-between group ${selectedBranches.includes('Social') ? 'bg-indigo-600 border-indigo-500' : 'bg-white/5 border-white/10 opacity-50 hover:opacity-100'
+                    }`}
                 >
                   <div className="flex items-center gap-4">
                     <div className={`p-3 rounded-xl ${selectedBranches.includes('Social') ? 'bg-white/20' : 'bg-white/5'}`}>
@@ -179,32 +304,30 @@ const ProductionView: React.FC<Props> = ({ activeProject, report, onStartTasks }
                   {selectedBranches.includes('Social') && <Check size={18} />}
                 </button>
               </div>
-              
-              <button 
+
+              <button
                 onClick={handleGenerateTitles}
                 disabled={isGenerating}
-                className={`mt-10 w-full py-5 rounded-2xl font-black shadow-2xl transition-all flex items-center justify-center gap-3 active:scale-95 ${
-                  isReady ? 'bg-emerald-600 text-white' : 'bg-white text-slate-900 hover:bg-cyan-400'
-                }`}
+                className={`mt-10 w-full py-5 rounded-2xl font-black shadow-2xl transition-all flex items-center justify-center gap-3 active:scale-95 ${isReady ? 'bg-indigo-600 text-white hover:bg-indigo-700' : 'bg-slate-900 text-white hover:bg-slate-800'
+                  }`}
               >
-                {isGenerating ? <Loader2 className="animate-spin" size={20} /> : (isReady ? <CheckCircle2 size={20} /> : <Zap size={20} />)}
-                {isReady ? '重新生成选题' : '开始选题生成'}
+                {isGenerating ? <Loader2 className="animate-spin" size={20} /> : <Sparkles size={20} />}
+                {isGenerating ? '正在分析...' : '生成/更新选题矩阵'}
               </button>
             </div>
-            
-            <button 
+
+            <button
               onClick={() => {
                 if (isReady) {
                   setStep('selection');
                 } else {
                   alert('请先点击“开始选题生成”以准备内容矩阵。');
                 }
-              }} 
-              className={`w-full py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
-                isReady 
-                  ? 'bg-slate-900 text-white hover:bg-indigo-600 shadow-xl' 
-                  : 'bg-white border border-slate-200 text-slate-300 cursor-not-allowed opacity-60'
-              }`}
+              }}
+              className={`w-full py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${isReady
+                ? 'bg-slate-900 text-white hover:bg-indigo-600 shadow-xl'
+                : 'bg-white border border-slate-200 text-slate-300 cursor-not-allowed opacity-60'
+                }`}
             >
               下一步 (预览清单)
               <ChevronRight size={18} />
@@ -213,6 +336,11 @@ const ProductionView: React.FC<Props> = ({ activeProject, report, onStartTasks }
         </div>
       </div>
     );
+  }
+
+  // Dead code removed (production step handled by TaskCenterView)
+  if (step === 'production') {
+    return null;
   }
 
   return (
@@ -233,15 +361,15 @@ const ProductionView: React.FC<Props> = ({ activeProject, report, onStartTasks }
           <div className="flex items-center gap-4 flex-1 w-full max-w-2xl">
             <div className="relative flex-1">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder="搜索关键词/标题..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
-            <select 
+            <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
               className="px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-black text-xs text-slate-600 outline-none cursor-pointer"
@@ -251,8 +379,8 @@ const ProductionView: React.FC<Props> = ({ activeProject, report, onStartTasks }
               <option value="Social">社交媒体</option>
             </select>
           </div>
-          
-          <button 
+
+          <button
             onClick={() => onStartTasks(matrix.filter(m => m.selected))}
             className="px-12 py-5 bg-indigo-600 text-white rounded-[1.5rem] font-black text-sm shadow-xl shadow-indigo-500/30 hover:bg-slate-900 transition-all flex items-center gap-3 active:scale-95"
           >
@@ -265,8 +393,8 @@ const ProductionView: React.FC<Props> = ({ activeProject, report, onStartTasks }
             <thead>
               <tr className="border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
                 <th className="px-8 py-6 w-16 text-center">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     checked={filteredMatrix.length > 0 && filteredMatrix.every(m => m.selected)}
                     onChange={(e) => setMatrix(matrix.map(m => filteredMatrix.some(fm => fm.id === m.id) ? { ...m, selected: e.target.checked } : m))}
                     className="w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
@@ -283,8 +411,8 @@ const ProductionView: React.FC<Props> = ({ activeProject, report, onStartTasks }
               {filteredMatrix.map(item => (
                 <tr key={item.id} className={`hover:bg-slate-50/50 transition-all group ${item.selected ? 'bg-indigo-50/10' : ''}`}>
                   <td className="px-8 py-6 text-center">
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       checked={item.selected}
                       onChange={() => setMatrix(matrix.map(m => m.id === item.id ? { ...m, selected: !m.selected } : m))}
                       className="w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
@@ -297,9 +425,8 @@ const ProductionView: React.FC<Props> = ({ activeProject, report, onStartTasks }
                     <span className="text-xs font-black text-indigo-500 bg-indigo-50 px-3 py-1 rounded-lg">#{item.keyword}</span>
                   </td>
                   <td className="px-6 py-6">
-                    <span className={`text-[9px] font-black px-3 py-1 rounded-lg border uppercase tracking-widest ${
-                      item.branch === 'Article' ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-indigo-600 border-indigo-200'
-                    }`}>
+                    <span className={`text-[9px] font-black px-3 py-1 rounded-lg border uppercase tracking-widest ${item.branch === 'Article' ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-indigo-600 border-indigo-200'
+                      }`}>
                       {item.branch === 'Article' ? '深度文章' : '社媒分发'}
                     </span>
                   </td>
@@ -307,8 +434,8 @@ const ProductionView: React.FC<Props> = ({ activeProject, report, onStartTasks }
                     <span className="text-xs font-bold text-slate-500">{item.estimatedWords} 字</span>
                   </td>
                   <td className="px-10 py-6 text-right">
-                    <button 
-                      onClick={() => setEditingItem({...item})}
+                    <button
+                      onClick={() => setEditingItem({ ...item })}
                       className="p-3 bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-900 hover:text-white transition-all shadow-sm"
                     >
                       <Edit3 size={16} />
@@ -321,82 +448,82 @@ const ProductionView: React.FC<Props> = ({ activeProject, report, onStartTasks }
         </div>
 
         <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
-           <button 
+          <button
             onClick={() => setStep('setup')}
             className="px-10 py-4 bg-white border border-slate-200 text-slate-500 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center gap-2"
-           >
-             <ArrowLeft size={18} /> 返回上一步
-           </button>
-           <div className="text-xs font-black text-slate-400 uppercase tracking-widest">
-             共选中 {matrix.filter(m => m.selected).length} 个生成任务
-           </div>
+          >
+            <ArrowLeft size={18} /> 返回上一步
+          </button>
+          <div className="text-xs font-black text-slate-400 uppercase tracking-widest">
+            共选中 {matrix.filter(m => m.selected).length} 个生成任务
+          </div>
         </div>
       </div>
 
       {/* 编辑弹窗 */}
       {editingItem && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[110] flex items-center justify-center p-6 animate-in fade-in duration-300">
-           <div className="bg-white rounded-[3rem] w-full max-w-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-             <header className="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                <div className="flex items-center gap-4">
-                   <div className="p-3 bg-indigo-600 rounded-2xl text-white">
-                     <Edit3 size={24} />
-                   </div>
-                   <h3 className="text-2xl font-black text-slate-900 tracking-tight italic uppercase">编辑标题弹窗</h3>
+          <div className="bg-white rounded-[3rem] w-full max-w-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+            <header className="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-indigo-600 rounded-2xl text-white">
+                  <Edit3 size={24} />
                 </div>
-                <button onClick={() => setEditingItem(null)} className="p-2 hover:bg-slate-200 rounded-full transition-colors"><X size={24} /></button>
-             </header>
+                <h3 className="text-2xl font-black text-slate-900 tracking-tight italic uppercase">编辑标题弹窗</h3>
+              </div>
+              <button onClick={() => setEditingItem(null)} className="p-2 hover:bg-slate-200 rounded-full transition-colors"><X size={24} /></button>
+            </header>
 
-             <form onSubmit={handleSaveEdit} className="p-10 space-y-8">
+            <form onSubmit={handleSaveEdit} className="p-10 space-y-8">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">标题 (Title)</label>
+                <input
+                  type="text"
+                  value={editingItem.title}
+                  onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
+                  className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">标题 (Title)</label>
-                   <input 
-                    type="text" 
-                    value={editingItem.title}
-                    onChange={(e) => setEditingItem({...editingItem, title: e.target.value})}
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">类型分支</label>
+                  <select
+                    value={editingItem.branch}
+                    onChange={(e) => setEditingItem({ ...editingItem, branch: e.target.value as ContentBranch })}
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none cursor-pointer"
+                  >
+                    <option value="Article">深度文章</option>
+                    <option value="Social">社交媒体图文</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">字数设置</label>
+                  <input
+                    type="number"
+                    value={editingItem.estimatedWords}
+                    onChange={(e) => setEditingItem({ ...editingItem, estimatedWords: parseInt(e.target.value) })}
                     className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                   />
+                  />
                 </div>
-                
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">类型分支</label>
-                     <select 
-                      value={editingItem.branch}
-                      onChange={(e) => setEditingItem({...editingItem, branch: e.target.value as ContentBranch})}
-                      className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 outline-none cursor-pointer"
-                     >
-                       <option value="Article">深度文章</option>
-                       <option value="Social">社交媒体图文</option>
-                     </select>
-                  </div>
-                  <div className="space-y-2">
-                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">字数设置</label>
-                     <input 
-                      type="number" 
-                      value={editingItem.estimatedWords}
-                      onChange={(e) => setEditingItem({...editingItem, estimatedWords: parseInt(e.target.value)})}
-                      className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                     />
-                  </div>
-                </div>
+              </div>
 
-                <div className="space-y-2">
-                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">关键词 (Entity Tag)</label>
-                   <input 
-                    type="text" 
-                    value={editingItem.keyword}
-                    onChange={(e) => setEditingItem({...editingItem, keyword: e.target.value})}
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                   />
-                </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">关键词 (Entity Tag)</label>
+                <input
+                  type="text"
+                  value={editingItem.keyword}
+                  onChange={(e) => setEditingItem({ ...editingItem, keyword: e.target.value })}
+                  className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl font-bold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
 
-                <div className="flex gap-4 pt-4">
-                  <button type="button" onClick={() => setEditingItem(null)} className="flex-1 py-4 border border-slate-200 rounded-2xl font-black text-slate-500 hover:bg-slate-50 transition-all uppercase tracking-widest text-xs">取消</button>
-                  <button type="submit" className="flex-1 py-4 bg-indigo-600 text-white rounded-2xl font-black shadow-xl hover:bg-slate-900 transition-all uppercase tracking-widest text-xs">保存</button>
-                </div>
-             </form>
-           </div>
+              <div className="flex gap-4 pt-4">
+                <button type="button" onClick={() => setEditingItem(null)} className="flex-1 py-4 border border-slate-200 rounded-2xl font-black text-slate-500 hover:bg-slate-50 transition-all uppercase tracking-widest text-xs">取消</button>
+                <button type="submit" className="flex-1 py-4 bg-indigo-600 text-white rounded-2xl font-black shadow-xl hover:bg-slate-900 transition-all uppercase tracking-widest text-xs">保存</button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

@@ -2,18 +2,19 @@
 OpenAI GPT-5 Service - Content generation and analysis
 """
 
-from openai import OpenAI
+from openai import AsyncOpenAI
 from typing import Optional, Dict, Any, List
 import json
 from api.config import get_settings
 
 class OpenAIService:
-    """Service wrapper for OpenAI API"""
+    """Service wrapper for OpenAI API (Async)"""
     
     def __init__(self):
         settings = get_settings()
         self.api_key = settings.openai_api_key
-        self.client = OpenAI(api_key=self.api_key)
+        # Use AsyncOpenAI for non-blocking calls
+        self.client = AsyncOpenAI(api_key=self.api_key)
         # 使用 gpt-4o-mini 因为它更快、更便宜且不仅限于 Tier 1+ 用户
         self.model = "gpt-4o-mini"  
         self.fast_model = "gpt-4o-mini"
@@ -38,7 +39,7 @@ class OpenAIService:
         prompt = get_company_analysis_prompt(content)
         
         try:
-            response = self.client.chat.completions.create(
+            response = await self.client.chat.completions.create(
                 model=self.fast_model,
                 messages=[
                     {"role": "system", "content": SYSTEM_COMPANY_ANALYSIS},
@@ -48,6 +49,7 @@ class OpenAIService:
             )
             return json.loads(response.choices[0].message.content)
         except Exception as e:
+            print(f"Error in analyze_company_content: {e}")
             return {
                 "company_name": company_name or "Unknown",
                 "industry": "Technology",
@@ -57,26 +59,55 @@ class OpenAIService:
                 "key_features": [],
                 "error": str(e)
             }
+
+    async def generate_search_simulation(
+        self,
+        profile: Dict[str, Any],
+        n: int = 5
+    ) -> List[str]:
+        """
+        Simulate real user search queries based on company profile
+        """
+        from api.prompts import get_search_simulation_prompt, SYSTEM_SEARCH_SIMULATION
+        
+        prompt = get_search_simulation_prompt(profile, n)
+        
+        try:
+            response = await self.client.chat.completions.create(
+                model=self.fast_model,
+                messages=[
+                    {"role": "system", "content": SYSTEM_SEARCH_SIMULATION},
+                    {"role": "user", "content": prompt}
+                ],
+                response_format={"type": "json_object"}
+            )
+            result = json.loads(response.choices[0].message.content)
+            return result.get("queries", [])
+        except Exception as e:
+            print(f"[Gemini] Search simulation failed: {e}")
+            return []
     
     async def generate_gap_analysis(
         self, 
         company_profile: Dict[str, Any],
-        competitor_data: List[Dict[str, Any]]
+        competitor_data: List[Dict[str, Any]],
+        our_site_content: str = ""
     ) -> Dict[str, Any]:
         """
         Generate GEO gap analysis comparing company to competitors
+        Uses real website content for side-by-side comparisons
         """
         from api.prompts import get_gap_analysis_prompt, SYSTEM_GAP_ANALYSIS
         
-        competitor_summary = "\n".join([
-            f"竞品 {i+1} ({c['url']}): {c.get('content', 'N/A')[:2000]}"
+        competitor_summary = "\n\n".join([
+            f"### 竞品 {i+1}: {c['url']}\n{c.get('content', 'N/A')[:5000]}"
             for i, c in enumerate(competitor_data) if c.get("success")
         ])
         
-        prompt = get_gap_analysis_prompt(company_profile, competitor_summary)
+        prompt = get_gap_analysis_prompt(company_profile, competitor_summary, our_site_content)
         
         try:
-            response = self.client.chat.completions.create(
+            response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[
                     {"role": "system", "content": SYSTEM_GAP_ANALYSIS},
@@ -86,21 +117,15 @@ class OpenAIService:
             )
             return json.loads(response.choices[0].message.content)
         except Exception as e:
-            # Return mock data on failure
+            # Return error instead of mock data
+            print(f"[GapAnalysis] AI analysis failed: {e}")
             return {
-                "summary": "诊断结论：当前站点在生成式引擎中的'实体权威度'不足",
-                "competitorGaps": [
-                    {"dimension": "实体权重", "description": "竞品引用 2024 标准，我方缺乏规范引用。", "impact": "极高"}
-                ],
-                "missingKeywords": [
-                    {"cluster": "技术底层", "keywords": ["RAG 对齐", "Schema FAQ", "内容幻觉抑制"], "priority": "高"}
-                ],
-                "structuralGaps": [
-                    {"component": "Markdown 表格", "whyNeeded": "Perplexity 优先抓取表格键值对。"}
-                ],
-                "suggestions": [
-                    {"action": "重构核心博客为数据矩阵", "timeframe": "3天", "expectedOutcome": "提升覆盖率"}
-                ],
+                "summary": f"差距分析失败: {str(e)}",
+                "contentComparisons": [],
+                "competitorGaps": [],
+                "missingKeywords": [],
+                "structuralGaps": [],
+                "suggestions": [],
                 "error": str(e)
             }
     
@@ -108,21 +133,23 @@ class OpenAIService:
         self,
         company_name: str,
         domain: str,
-        scraped_content: Optional[Dict[str, Any]] = None
+        scraped_content: Optional[Dict[str, Any]] = None,
+        latest_news: str = ""
     ) -> Dict[str, Any]:
         """
         Generate a comprehensive company profile for GEO optimization
+        Enriched with latest news from Perplexity when available
         """
         from api.prompts import get_company_profile_prompt, SYSTEM_COMPANY_PROFILE
         
         content_context = ""
         if scraped_content:
-            content_context = f"基于爬取的内容：{str(scraped_content)[:3000]}"
+            content_context = f"基于爬取的内容：{str(scraped_content)[:5000]}"
         
-        prompt = get_company_profile_prompt(company_name, domain, content_context)
+        prompt = get_company_profile_prompt(company_name, domain, content_context, latest_news)
         
         try:
-            response = self.client.chat.completions.create(
+            response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[
                     {"role": "system", "content": SYSTEM_COMPANY_PROFILE},
@@ -133,6 +160,7 @@ class OpenAIService:
                 "company_name": company_name,
                 "domain": domain,
                 "profile_text": response.choices[0].message.content,
+                "has_latest_news": bool(latest_news),
                 "generated_at": str(__import__('datetime').datetime.now())
             }
         except Exception as e:
@@ -147,14 +175,16 @@ class OpenAIService:
         self,
         title: str,
         content_type: str,
-        profile: Dict[str, Any]
+        profile: Dict[str, Any],
+        context_data: Optional[Dict[str, Any]] = None
     ) -> str:
         """
-        Generate content based on title and type (Article or Social)
+        Generate content based on title and type (Article or Social).
+        Supports context injection (Deep Research / Social Trends).
         """
         from api.prompts import get_content_generation_prompt, SYSTEM_CONTENT_ARTICLE, SYSTEM_CONTENT_SOCIAL
         
-        prompt = get_content_generation_prompt(title, content_type, profile)
+        prompt = get_content_generation_prompt(title, content_type, profile, context_data)
         
         if content_type == "Article":
             system_prompt = SYSTEM_CONTENT_ARTICLE
@@ -164,7 +194,7 @@ class OpenAIService:
             model = self.fast_model
         
         try:
-            response = self.client.chat.completions.create(
+            response = await self.client.chat.completions.create(
                 model=model,
                 messages=[
                     {"role": "system", "content": system_prompt},
@@ -177,6 +207,90 @@ class OpenAIService:
                 return f"# {title}\n\n## 核心见解\n\n内容生成失败: {str(e)}"
             else:
                 return f"{title}\n\n🚀 内容生成失败: {str(e)}\n\n#GEO #AI #Marketing"
+
+    async def regenerate_content(
+        self,
+        original_content: str,
+        feedback: str,
+        content_type: str = "Article"
+    ) -> str:
+        """
+        Regenerate/Refine content based on user feedback.
+        """
+        from api.prompts import get_regenerate_content_prompt, SYSTEM_CONTENT_ARTICLE, SYSTEM_CONTENT_SOCIAL
+        
+        prompt = get_regenerate_content_prompt(original_content, feedback, content_type)
+        
+        system_prompt = SYSTEM_CONTENT_ARTICLE if content_type == "Article" else SYSTEM_CONTENT_SOCIAL
+        
+        try:
+            response = await self.client.chat.completions.create(
+                model=self.model, # Use smart model for refinement
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": prompt}
+                ]
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            return f"优化失败: {str(e)}\n\n{original_content}"
+
+    async def generate_keywords(
+        self,
+        profile: Dict[str, Any]
+    ) -> List[Dict[str, Any]]:
+        """
+        Generate GEO-optimized keywords from company profile
+        """
+        from api.prompts import get_keyword_generation_prompt, SYSTEM_KEYWORD_GENERATION
+        
+        prompt = get_keyword_generation_prompt(profile)
+        
+        try:
+            response = await self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": SYSTEM_KEYWORD_GENERATION},
+                    {"role": "user", "content": prompt}
+                ],
+                response_format={"type": "json_object"}
+            )
+            result = json.loads(response.choices[0].message.content)
+            return result.get("keywords", [])
+        except Exception as e:
+            print(f"Error in generate_keywords: {e}")
+            return []
+            return []
+
+    async def generate_titles(
+        self,
+        topic: str,
+        niche: str,
+        profile: Dict[str, Any],
+        trends_context: str = "",
+        n: int = 10
+    ) -> List[Dict[str, Any]]:
+        """
+        Generate viral titles based on topic, profile, and trends
+        """
+        from api.prompts import get_title_generation_prompt, SYSTEM_TITLE_GENERATION
+        
+        prompt = get_title_generation_prompt(topic, niche, profile, trends_context, n)
+        
+        try:
+            response = await self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": SYSTEM_TITLE_GENERATION},
+                    {"role": "user", "content": prompt}
+                ],
+                response_format={"type": "json_object"}
+            )
+            result = json.loads(response.choices[0].message.content)
+            return result.get("titles", [])
+        except Exception as e:
+            print(f"Error in generate_titles: {e}")
+            return []
 
 
 # Singleton instance

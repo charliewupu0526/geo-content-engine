@@ -1,11 +1,12 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { TaskItem, Project, ContentBranch, TaskBatch } from '../types';
-import { 
-  FileText, 
-  Smartphone, 
-  Eye, 
-  Zap, 
+import { apiClient } from '../services/apiClient';
+import {
+  FileText,
+  Smartphone,
+  Eye,
+  Zap,
   X,
   Share2,
   Loader2,
@@ -51,19 +52,12 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
   const [previewTask, setPreviewTask] = useState<TaskItem | null>(null);
   const [isProcessingAction, setIsProcessingAction] = useState(false);
   const [selectAll, setSelectAll] = useState(false);
-  
+
   // 发布渠道选择弹窗状态
   const [publishModalOpen, setPublishModalOpen] = useState(false);
   const [publishingTasks, setPublishingTasks] = useState<TaskItem[]>([]);
 
-  // 模拟数据：生成死内容
-  const getMockContent = (branch: ContentBranch) => {
-    if (branch === 'Article') {
-      return `## 核心分析报告 (AI Generated)\n\n在生成式人工智能（Generative AI）飞速发展的今天，GEO（Generative Engine Optimization）已成为品牌获取流量的新战场。本文将为您拆解 2025 年的核心策略。\n\n### 1. 实体对齐矩阵\n通过建立高密度的实体关联，我们可以显著提升被 AI 摘要引用的概率。建议使用 JSON-LD 结构化数据补全节点。\n\n### 2. E-E-A-T 增强策略\n- **经验 (Experience)**: 展示一手实测数据。\n- **专业 (Expertise)**: 引用行业白皮书。\n- **权威 (Authoritative)**: 获取高质量外部反向引用。\n- **信任 (Trust)**: 透明的作者资质说明。`;
-    } else {
-      return `🚀 内容爆发指南：如何在 1 分钟内让你的品牌出现在 Perplexity 首页？\n\n1️⃣ 核心观点：实体对齐高于一切\n2️⃣ 操作手段：使用结构化 Markdown 表格\n3️⃣ 必杀技：注入真实专家评论\n\n#GEO #AI营销 #SaaS #增长黑客`;
-    }
-  };
+
 
   // 确保初始有活跃批次
   useEffect(() => {
@@ -118,24 +112,66 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
     onUpdateBatches(updatedBatches);
   };
 
-  const handleAction = (task: TaskItem, action: string) => {
+  // Regenerate Modal State
+  const [regenerateModalOpen, setRegenerateModalOpen] = useState(false);
+  const [regenerateTask, setRegenerateTask] = useState<TaskItem | null>(null);
+  const [regenerateFeedback, setRegenerateFeedback] = useState('');
+
+  const handleAction = async (task: TaskItem, action: string) => {
     setIsProcessingAction(true);
-    setTimeout(() => {
-      if (action === 'Regenerate') {
-        const updated = { ...task, content: getMockContent(task.branch), genStatus: 'Success' as const };
-        updateTaskState(updated);
-        setPreviewTask(updated);
-      } else if (action === 'Save') {
-        updateTaskState(task);
-        alert('保存更新成功！');
-      } else if (action === 'Publish') {
-        const updated = { ...task, pubStatus: 'Success' as const };
-        updateTaskState(updated);
-        if (previewTask?.id === task.id) setPreviewTask(updated);
-        alert('内容已发布至指定渠道！');
-      }
+
+    if (action === 'Regenerate') {
+      setRegenerateTask(task);
+      setRegenerateFeedback("优化这段内容，使其更具吸引力"); // Default prompt
+      setRegenerateModalOpen(true);
       setIsProcessingAction(false);
-    }, 800);
+      return;
+    } else if (action === 'Save') {
+      // Logic to save to DB if needed, currently just updates local state
+      updateTaskState(task);
+      alert('保存更新成功！');
+    } else if (action === 'Publish') {
+      // This is handled by openPublishModal usually, but for quick publish:
+      alert('请使用底部的"发布批次"按钮进行批量发布');
+    }
+
+    setIsProcessingAction(false);
+  };
+
+  const confirmRegeneration = async () => {
+    if (!regenerateTask || !regenerateFeedback) return;
+
+    setRegenerateModalOpen(false);
+    // Optimistically update UI to show loading if needed, or just let the user wait
+    const currentTask = regenerateTask;
+
+    // We can show a loading state in the preview or list if we want, 
+    // but for now let's just do the async call
+
+    try {
+      // Show some global loading or toast? For now, we'll just rely on the existing update logic
+      // But since we closed the modal, maybe we want to keep it open with a loader?
+      // Let's close it and update the Task to a "Generating" state ideally, 
+      // but the current type system might mostly support "Pending".
+      // Let's just block the UI slightly or show an alert after.
+
+      const res = await apiClient.regenerateContent(currentTask.content || "", regenerateFeedback, currentTask.branch);
+      if (res.success && res.data) {
+        const updated = { ...currentTask, content: (res.data as any).content, genStatus: 'Success' as const };
+        updateTaskState(updated);
+        if (previewTask && previewTask.id === currentTask.id) {
+          setPreviewTask(updated);
+        }
+        alert('内容已根据您的意见重新生成！');
+      } else {
+        alert('重生成失败: ' + (res.error || '未知错误'));
+      }
+    } catch (e) {
+      alert('系统错误');
+    } finally {
+      setRegenerateTask(null);
+      setRegenerateFeedback('');
+    }
   };
 
   const updateTaskState = (updatedTask: TaskItem) => {
@@ -170,7 +206,7 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
         {/* 顶部栏 */}
         <header className="h-20 bg-white border-b border-slate-200 px-8 flex items-center justify-between sticky top-0 z-50 shrink-0">
           <div className="flex items-center gap-6">
-            <button 
+            <button
               onClick={() => setPreviewTask(null)}
               className="flex items-center gap-2 px-4 py-2 hover:bg-slate-50 rounded-xl transition-all font-black text-slate-500 text-sm group"
             >
@@ -181,27 +217,27 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
               {previewTask.branch === 'Article' ? '深化文章内容预览' : '社媒内容预览'}
             </h3>
           </div>
-          
+
           <div className="flex items-center gap-4">
-             <div className="px-5 py-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-[10px] font-black text-emerald-600 uppercase tracking-widest mr-4 flex items-center gap-2 shadow-sm shadow-emerald-100/50">
-               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-               站点连接状态：<span className="text-emerald-500">已就绪</span>
-             </div>
-             <button 
-               onClick={() => handleAction(previewTask, 'Regenerate')}
-               className="px-6 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm"
-             >
-               {isProcessingAction ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />} 重新生成
-             </button>
-             <button className="px-6 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
-               <Eye size={16} /> 预览
-             </button>
-             <button 
-               onClick={() => handleAction(previewTask, 'Publish')}
-               className="px-8 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-black hover:bg-indigo-600 transition-all flex items-center gap-2 shadow-xl shadow-slate-200"
-             >
-               <Share2 size={16} /> 保存/更新发布
-             </button>
+            <div className="px-5 py-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-[10px] font-black text-emerald-600 uppercase tracking-widest mr-4 flex items-center gap-2 shadow-sm shadow-emerald-100/50">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+              站点连接状态：<span className="text-emerald-500">已就绪</span>
+            </div>
+            <button
+              onClick={() => handleAction(previewTask, 'Regenerate')}
+              className="px-6 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm"
+            >
+              {isProcessingAction ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />} 重新生成
+            </button>
+            <button className="px-6 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+              <Eye size={16} /> 预览
+            </button>
+            <button
+              onClick={() => handleAction(previewTask, 'Publish')}
+              className="px-8 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-black hover:bg-indigo-600 transition-all flex items-center gap-2 shadow-xl shadow-slate-200"
+            >
+              <Share2 size={16} /> 保存/更新发布
+            </button>
           </div>
         </header>
 
@@ -213,11 +249,12 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
               {/* 标题控制块 */}
               <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm text-center">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 block">标题</label>
-                <input 
-                  type="text" 
-                  value={previewTask.title} 
-                  onChange={(e) => setPreviewTask({...previewTask, title: e.target.value})}
-                  className="w-full text-3xl font-black text-slate-900 bg-transparent text-center focus:outline-none border-b-2 border-slate-100 focus:border-indigo-400 pb-3 transition-all"
+                <textarea
+                  value={previewTask.title}
+                  onChange={(e) => setPreviewTask({ ...previewTask, title: e.target.value })}
+                  className="w-full text-3xl font-black text-slate-900 bg-transparent text-center focus:outline-none border-b-2 border-slate-100 focus:border-indigo-400 pb-3 transition-all resize-none overflow-hidden"
+                  rows={Math.max(1, Math.ceil(previewTask.title.length / 25))}
+                  style={{ minHeight: '60px' }}
                 />
               </div>
 
@@ -228,10 +265,11 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
                     <FileText className="text-indigo-600" size={24} />
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">生成内容 (Generated Content)</span>
                   </div>
-                  <textarea 
+                  <textarea
                     className="flex-1 w-full text-slate-700 leading-relaxed font-medium text-xl focus:outline-none resize-none bg-transparent no-scrollbar min-h-[600px]"
-                    value={previewTask.content || getMockContent('Article')}
-                    onChange={(e) => setPreviewTask({...previewTask, content: e.target.value})}
+                    value={previewTask.content || ''}
+                    placeholder="内容生成中..."
+                    onChange={(e) => setPreviewTask({ ...previewTask, content: e.target.value })}
                   />
                 </div>
               ) : (
@@ -240,24 +278,42 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
                   <div className="lg:col-span-8 space-y-8">
                     <div className="bg-white border border-slate-200 rounded-[2.5rem] p-12 shadow-sm space-y-10">
                       <div>
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">Hook 导语</label>
-                        <textarea className="w-full bg-slate-50 rounded-2xl p-6 text-slate-800 font-bold border-none focus:ring-1 focus:ring-indigo-100 transition-all resize-none min-h-[100px]" defaultValue="🚀 揭秘 2025 年 GEO 核心增长引擎！不看这篇你的流量可能要腰斩..." />
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">Hook 导语 (Preview)</label>
+                        <textarea
+                          className="w-full bg-slate-50 rounded-2xl p-6 text-slate-800 font-bold border-none focus:ring-1 focus:ring-indigo-100 transition-all resize-none min-h-[100px]"
+                          value={(() => {
+                            const content = previewTask.content || "";
+                            const parts = content.split('\n').filter(p => p.trim().length > 0);
+                            return parts.length > 0 ? parts[0] : "";
+                          })()}
+                          placeholder="生成中..."
+                          readOnly
+                        />
                       </div>
                       <div>
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">文章内容</label>
-                        <textarea 
+                        <textarea
                           className="w-full bg-slate-50 rounded-2xl p-6 text-slate-700 font-medium border-none focus:ring-1 focus:ring-indigo-100 transition-all resize-none min-h-[400px]"
-                          value={previewTask.content || getMockContent('Social')}
-                          onChange={(e) => setPreviewTask({...previewTask, content: e.target.value})}
+                          value={previewTask.content || ''}
+                          placeholder="内容生成中..."
+                          onChange={(e) => setPreviewTask({ ...previewTask, content: e.target.value })}
                         />
                       </div>
                       <div>
                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">标签 / Tag</label>
-                        <input className="w-full bg-slate-50 rounded-2xl p-6 text-indigo-600 font-black border-none focus:ring-1 focus:ring-indigo-100 transition-all" defaultValue="#GEO #AI #SearchGPT #DigitalMarketing" />
+                        <input
+                          className="w-full bg-slate-50 rounded-2xl p-6 text-indigo-600 font-black border-none focus:ring-1 focus:ring-indigo-100 transition-all"
+                          value={(() => {
+                            const content = previewTask.content || "";
+                            const tags = content.match(/#[^\s#]+/g);
+                            return tags ? tags.join(' ') : "";
+                          })()}
+                          readOnly
+                        />
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* 配图栏 */}
                   <div className="lg:col-span-4 space-y-6">
                     <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
@@ -283,34 +339,34 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
 
           {/* 右侧边栏：合规性与优化 */}
           <aside className="w-[380px] border-l border-slate-200 bg-white p-10 space-y-10 shrink-0 overflow-y-auto no-scrollbar">
-             <div className="bg-slate-900 rounded-[2.5rem] p-10 text-white space-y-8 shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-125 transition-transform"><ShieldCheck size={180} /></div>
-                <div className="flex items-center gap-3 relative z-10">
-                  <ShieldCheck className="text-indigo-400" size={24} />
-                  <h4 className="text-xs font-black uppercase tracking-widest">合规性检查</h4>
-                </div>
-                <div className="space-y-6 relative z-10">
-                   {[
-                     { l: "GEO 对齐度", v: "98.2%", c: "text-emerald-400" },
-                     { l: "幻觉识别", v: "Safe", c: "text-emerald-400" },
-                     { l: "E-E-A-T 分值", v: "A+", c: "text-indigo-400" }
-                   ].map((item, idx) => (
-                     <div key={idx} className="flex items-center justify-between border-b border-white/5 pb-4 last:border-0">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase">{item.l}</span>
-                        <span className={`text-sm font-black ${item.c}`}>{item.v}</span>
-                     </div>
-                   ))}
-                </div>
-                <p className="text-[9px] text-slate-500 italic leading-relaxed relative z-10">
-                  当前内容符合 Perplexity 与 SearchGPT 的结构化抓取规范。
-                </p>
-             </div>
+            <div className="bg-slate-900 rounded-[2.5rem] p-10 text-white space-y-8 shadow-2xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-125 transition-transform"><ShieldCheck size={180} /></div>
+              <div className="flex items-center gap-3 relative z-10">
+                <ShieldCheck className="text-indigo-400" size={24} />
+                <h4 className="text-xs font-black uppercase tracking-widest">合规性检查</h4>
+              </div>
+              <div className="space-y-6 relative z-10">
+                {[
+                  { l: "GEO 对齐度", v: "98.2%", c: "text-emerald-400" },
+                  { l: "幻觉识别", v: "Safe", c: "text-emerald-400" },
+                  { l: "E-E-A-T 分值", v: "A+", c: "text-indigo-400" }
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-center justify-between border-b border-white/5 pb-4 last:border-0">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase">{item.l}</span>
+                    <span className={`text-sm font-black ${item.c}`}>{item.v}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-[9px] text-slate-500 italic leading-relaxed relative z-10">
+                当前内容符合 Perplexity 与 SearchGPT 的结构化抓取规范。
+              </p>
+            </div>
 
-             <div className="space-y-4 pt-6">
-                <button className="w-full py-5 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-2xl font-black text-xs hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center gap-3 shadow-sm group">
-                  <Wand2 size={18} className="group-hover:rotate-12 transition-transform" /> AI 结构优化
-                </button>
-             </div>
+            <div className="space-y-4 pt-6">
+              <button className="w-full py-5 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-2xl font-black text-xs hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center gap-3 shadow-sm group">
+                <Wand2 size={18} className="group-hover:rotate-12 transition-transform" /> AI 结构优化
+              </button>
+            </div>
           </aside>
         </div>
       </div>
@@ -326,28 +382,28 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
       <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[110] flex items-center justify-center p-6 animate-in fade-in duration-300">
         <div className="bg-white rounded-[3rem] w-full max-w-4xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col">
           <header className="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-             <div className="flex items-center gap-4">
-                <div className="p-3 bg-indigo-600 rounded-2xl text-white">
-                  <Share2 size={24} />
-                </div>
-                <h3 className="text-2xl font-black text-slate-900 tracking-tight italic uppercase">发布方式弹窗 / 渠道选择</h3>
-             </div>
-             <button onClick={() => setPublishModalOpen(false)} className="p-2 hover:bg-slate-200 rounded-full transition-colors"><X size={24} /></button>
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-indigo-600 rounded-2xl text-white">
+                <Share2 size={24} />
+              </div>
+              <h3 className="text-2xl font-black text-slate-900 tracking-tight italic uppercase">发布方式弹窗 / 渠道选择</h3>
+            </div>
+            <button onClick={() => setPublishModalOpen(false)} className="p-2 hover:bg-slate-200 rounded-full transition-colors"><X size={24} /></button>
           </header>
 
           <div className="p-10 flex-1 overflow-y-auto max-h-[500px] no-scrollbar">
             <div className="grid grid-cols-12 gap-4 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 px-6">
-               <div className="col-span-8">标题 (Title)</div>
-               <div className="col-span-2 text-center">ins</div>
-               <div className="col-span-2 text-center">X</div>
+              <div className="col-span-8">标题 (Title)</div>
+              <div className="col-span-2 text-center">ins</div>
+              <div className="col-span-2 text-center">X</div>
             </div>
-            
+
             <div className="space-y-3">
               {publishingTasks.map(task => (
                 <div key={task.id} className="grid grid-cols-12 gap-4 items-center bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:border-indigo-200 transition-all">
                   <div className="col-span-8 font-black text-slate-800 text-sm truncate">{task.title}</div>
                   <div className="col-span-2 flex justify-center">
-                    <button 
+                    <button
                       onClick={() => alert('已选择/取消 ins 渠道')}
                       className={`w-6 h-6 rounded-md border flex items-center justify-center transition-all ${task.branch === 'Social' ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-200'}`}
                     >
@@ -355,7 +411,7 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
                     </button>
                   </div>
                   <div className="col-span-2 flex justify-center">
-                    <button 
+                    <button
                       onClick={() => alert('已选择/取消 X 渠道')}
                       className={`w-6 h-6 rounded-md border flex items-center justify-center transition-all ${task.branch === 'Social' ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-200'}`}
                     >
@@ -368,21 +424,21 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
           </div>
 
           <footer className="p-10 border-t border-slate-100 bg-white flex justify-end gap-6">
-             <button 
+            <button
               onClick={() => setPublishModalOpen(false)}
               className="px-12 py-4 border-2 border-slate-200 rounded-2xl font-black text-slate-500 hover:bg-slate-50 transition-all"
-             >
-               取消
-             </button>
-             <button 
+            >
+              取消
+            </button>
+            <button
               onClick={() => {
                 alert('正在全渠道分发...');
                 setPublishModalOpen(false);
               }}
               className="px-16 py-4 bg-rose-400 text-white rounded-2xl font-black shadow-xl hover:bg-slate-900 transition-all active:scale-95"
-             >
-               发布
-             </button>
+            >
+              发布
+            </button>
           </footer>
         </div>
       </div>
@@ -394,8 +450,61 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
   // --------------------------------------------------------------------------
   return (
     <div className="space-y-10 animate-in fade-in duration-700 pb-20">
+      {/* Regeneration Modal */}
+      {regenerateModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[120] flex items-center justify-center p-6 animate-in fade-in duration-300">
+          <div className="bg-white rounded-[2.5rem] w-full max-w-lg shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+            <header className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-indigo-100 text-indigo-600 rounded-xl">
+                  <Wand2 size={20} />
+                </div>
+                <h3 className="text-xl font-black text-slate-900 tracking-tight">内容重生成优化</h3>
+              </div>
+              <button
+                onClick={() => setRegenerateModalOpen(false)}
+                className="p-2 hover:bg-slate-200 rounded-full transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </header>
+
+            <div className="p-8 space-y-6">
+              <p className="text-sm text-slate-500 font-medium">请告诉 AI 您希望如何调整这段内容。具体的指令（如"缩短篇幅"、"增加数据"）效果更好。</p>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">优化指令 (Prompt)</label>
+                <textarea
+                  value={regenerateFeedback}
+                  onChange={(e) => setRegenerateFeedback(e.target.value)}
+                  className="w-full h-32 p-4 bg-slate-50 border border-slate-200 rounded-2xl font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none text-sm"
+                  placeholder="例如：请让语气更专业一些，并补充关于 GEO 的具体案例..."
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            <footer className="p-6 border-t border-slate-100 bg-slate-50/50 flex gap-3">
+              <button
+                onClick={() => setRegenerateModalOpen(false)}
+                className="flex-1 py-3.5 border border-slate-200 rounded-xl font-black text-slate-500 hover:bg-white transition-all text-xs"
+              >
+                取消
+              </button>
+              <button
+                onClick={confirmRegeneration}
+                disabled={!regenerateFeedback.trim()}
+                className="flex-1 py-3.5 bg-indigo-600 text-white rounded-xl font-black shadow-lg hover:bg-indigo-700 transition-all text-xs disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                <Zap size={16} fill="currentColor" /> 开始重生成
+              </button>
+            </footer>
+          </div>
+        </div>
+      )}
+
       <PublishModal />
-      
+
       {/* 顶部统计卡片区 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
@@ -421,17 +530,15 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
         <div className="flex items-center gap-1 bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm">
           <button
             onClick={() => setViewTab('queue')}
-            className={`px-8 py-2.5 rounded-xl text-xs font-black transition-all ${
-              viewTab === 'queue' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
-            }`}
+            className={`px-8 py-2.5 rounded-xl text-xs font-black transition-all ${viewTab === 'queue' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+              }`}
           >
             任务队列
           </button>
           <button
             onClick={() => setViewTab('history')}
-            className={`px-8 py-2.5 rounded-xl text-xs font-black transition-all ${
-              viewTab === 'history' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
-            }`}
+            className={`px-8 py-2.5 rounded-xl text-xs font-black transition-all ${viewTab === 'history' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+              }`}
           >
             历史批次
           </button>
@@ -449,29 +556,28 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
         <div className="space-y-6 animate-in slide-in-from-left-4 duration-500">
           <div className="bg-white border border-slate-200 rounded-[3rem] shadow-xl shadow-slate-200/40 overflow-hidden">
             <div className="bg-slate-50 border-b border-slate-100 p-8 flex flex-col md:flex-row justify-between items-center gap-4">
-               <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg">
-                    <LayoutGrid size={20} />
-                  </div>
-                  <div>
-                    <h4 className="text-base font-black text-slate-900 tracking-tight">{activeBatch?.name || '活跃执行任务队列'}</h4>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">ID: {activeBatchId?.slice(-6) || 'BATCH-01'}</p>
-                  </div>
-               </div>
-               
-               <div className="flex gap-2 bg-white p-1 rounded-xl border border-slate-200">
-                 {['All', 'Article', 'Social'].map(f => (
-                   <button 
-                     key={f}
-                     onClick={() => { setActiveFilter(f as any); setSelectAll(false); }}
-                     className={`px-6 py-1.5 rounded-lg text-[10px] font-black transition-all ${
-                       activeFilter === f ? 'bg-slate-900 text-white shadow-md' : 'bg-transparent text-slate-400 hover:text-slate-600'
-                     }`}
-                   >
-                     {f === 'All' ? '全部' : f === 'Article' ? '深度文章' : '社交媒体'}
-                   </button>
-                 ))}
-               </div>
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg">
+                  <LayoutGrid size={20} />
+                </div>
+                <div>
+                  <h4 className="text-base font-black text-slate-900 tracking-tight">{activeBatch?.name || '活跃执行任务队列'}</h4>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">ID: {activeBatchId?.slice(-6) || 'BATCH-01'}</p>
+                </div>
+              </div>
+
+              <div className="flex gap-2 bg-white p-1 rounded-xl border border-slate-200">
+                {['All', 'Article', 'Social'].map(f => (
+                  <button
+                    key={f}
+                    onClick={() => { setActiveFilter(f as any); setSelectAll(false); }}
+                    className={`px-6 py-1.5 rounded-lg text-[10px] font-black transition-all ${activeFilter === f ? 'bg-slate-900 text-white shadow-md' : 'bg-transparent text-slate-400 hover:text-slate-600'
+                      }`}
+                  >
+                    {f === 'All' ? '全部' : f === 'Article' ? '深度文章' : '社交媒体'}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="overflow-x-auto">
@@ -479,7 +585,7 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
                 <thead>
                   <tr className="border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
                     <th className="px-10 py-6 w-16 text-center">
-                      <button 
+                      <button
                         onClick={handleToggleSelectAll}
                         className={`w-6 h-6 rounded-md border flex items-center justify-center transition-all ${selectAll ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-200 hover:border-indigo-300'}`}
                       >
@@ -499,7 +605,7 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
                     filteredTasks.map(task => (
                       <tr key={task.id} className={`group hover:bg-slate-50/50 transition-all ${task.selected ? 'bg-indigo-50/20' : ''}`}>
                         <td className="px-10 py-8 text-center">
-                          <button 
+                          <button
                             onClick={() => handleToggleTask(task.id)}
                             className={`w-6 h-6 rounded-md border flex items-center justify-center mx-auto transition-all ${task.selected ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-200 hover:border-indigo-300'}`}
                           >
@@ -508,9 +614,8 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
                         </td>
                         <td className="px-6 py-8">
                           <div className="flex items-center gap-4">
-                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border ${
-                              task.branch === 'Article' ? 'bg-indigo-50 border-indigo-100 text-indigo-600' : 'bg-violet-50 border-violet-100 text-violet-600'
-                            }`}>
+                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border ${task.branch === 'Article' ? 'bg-indigo-50 border-indigo-100 text-indigo-600' : 'bg-violet-50 border-violet-100 text-violet-600'
+                              }`}>
                               {task.branch === 'Article' ? <FileText size={18} /> : <Smartphone size={18} />}
                             </div>
                             <h5 className="text-sm font-black text-slate-800 leading-tight truncate max-w-sm group-hover:text-indigo-600 transition-colors">{task.title}</h5>
@@ -520,17 +625,17 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
                           {renderStatusBadge(task)}
                         </td>
                         <td className="px-6 py-8">
-                           {task.pubStatus === 'Success' ? (
-                             <a href="#" className="flex items-center gap-2 text-xs font-black text-indigo-500 hover:underline">
-                               <ExternalLink size={14} /> 查看线上版本
-                             </a>
-                           ) : (
-                             <span className="text-xs font-bold text-slate-300">—</span>
-                           )}
+                          {task.pubStatus === 'Success' ? (
+                            <a href="#" className="flex items-center gap-2 text-xs font-black text-indigo-500 hover:underline">
+                              <ExternalLink size={14} /> 查看线上版本
+                            </a>
+                          ) : (
+                            <span className="text-xs font-bold text-slate-300">—</span>
+                          )}
                         </td>
                         <td className="px-10 py-8 text-right">
                           <div className="flex items-center justify-end gap-2">
-                             {renderTaskActions(task, setPreviewTask, handleAction)}
+                            {renderTaskActions(task, setPreviewTask, handleAction)}
                           </div>
                         </td>
                       </tr>
@@ -541,15 +646,15 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
             </div>
 
             <div className="bg-slate-50 border-t border-slate-100 p-8 flex justify-between items-center">
-               <button className="flex items-center gap-2 px-8 py-3.5 bg-white border border-slate-200 rounded-2xl text-xs font-black text-slate-500 hover:bg-slate-100 transition-all shadow-sm">
-                 <Download size={16} /> xml/csv 下载
-               </button>
-               <button 
+              <button className="flex items-center gap-2 px-8 py-3.5 bg-white border border-slate-200 rounded-2xl text-xs font-black text-slate-500 hover:bg-slate-100 transition-all shadow-sm">
+                <Download size={16} /> xml/csv 下载
+              </button>
+              <button
                 onClick={openPublishModal}
                 className="px-10 py-4 bg-indigo-600 text-white rounded-[1.8rem] font-black shadow-xl hover:bg-slate-900 transition-all active:scale-95 flex items-center gap-3"
-               >
-                 <Share2 size={18} /> 发布批次
-               </button>
+              >
+                <Share2 size={18} /> 发布批次
+              </button>
             </div>
           </div>
         </div>
@@ -565,20 +670,20 @@ const TaskCenterView: React.FC<Props> = ({ batches, activeProject, onUpdateBatch
             {batches.map(batch => (
               <div key={batch.id} className="p-8 border border-slate-100 rounded-[2.5rem] bg-slate-50/50 hover:bg-white hover:border-indigo-100 hover:shadow-lg transition-all flex items-center justify-between group">
                 <div>
-                   <h5 className="text-lg font-black text-slate-800">{batch.name}</h5>
-                   <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">{new Date(batch.timestamp).toLocaleString()}</p>
+                  <h5 className="text-lg font-black text-slate-800">{batch.name}</h5>
+                  <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">{new Date(batch.timestamp).toLocaleString()}</p>
                 </div>
                 <div className="flex items-center gap-12">
-                   <div className="text-center">
-                      <div className="text-[10px] text-slate-400 font-black uppercase mb-1">规模</div>
-                      <div className="text-xl font-black text-slate-900">{batch.tasks.length} 项</div>
-                   </div>
-                   <button 
-                     onClick={() => { setActiveBatchId(batch.id); setViewTab('queue'); }}
-                     className="px-8 py-3 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-900 hover:bg-slate-900 hover:text-white transition-all shadow-sm"
-                   >
-                     查看批次详情
-                   </button>
+                  <div className="text-center">
+                    <div className="text-[10px] text-slate-400 font-black uppercase mb-1">规模</div>
+                    <div className="text-xl font-black text-slate-900">{batch.tasks.length} 项</div>
+                  </div>
+                  <button
+                    onClick={() => { setActiveBatchId(batch.id); setViewTab('queue'); }}
+                    className="px-8 py-3 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-900 hover:bg-slate-900 hover:text-white transition-all shadow-sm"
+                  >
+                    查看批次详情
+                  </button>
                 </div>
               </div>
             ))}

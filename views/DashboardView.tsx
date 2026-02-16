@@ -1,18 +1,17 @@
 
 import React from 'react';
 import { Project, TaskItem, GapReport } from '../types';
-import { MOCK_GAP_REPORT } from '../services/geminiService';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { 
-  Users, 
-  FileCheck2, 
-  Globe, 
-  TrendingUp, 
-  Sparkles, 
-  Calendar, 
-  AlertCircle, 
-  ChevronRight, 
-  Search, 
+import {
+  Users,
+  FileCheck2,
+  Globe,
+  TrendingUp,
+  Sparkles,
+  Calendar,
+  AlertCircle,
+  ChevronRight,
+  Search,
   Zap,
   Activity,
   ArrowUpRight,
@@ -51,7 +50,7 @@ const DashboardView: React.FC<Props> = ({ projects, tasks, report }) => {
 
   return (
     <div className="space-y-10">
-      
+
       {/* 核心指标 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, i) => (
@@ -72,7 +71,7 @@ const DashboardView: React.FC<Props> = ({ projects, tasks, report }) => {
 
       {/* 趋势图与矩阵排期 */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
+
         {/* Visibility Chart */}
         <div className="lg:col-span-8 bg-white border border-slate-200/60 rounded-[3rem] p-10 shadow-sm overflow-hidden relative">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-500 opacity-20"></div>
@@ -82,8 +81,8 @@ const DashboardView: React.FC<Props> = ({ projects, tasks, report }) => {
               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.3em] mt-1">AI Search Performance</p>
             </div>
             <div className="flex gap-2 bg-slate-50 p-1 rounded-xl">
-               <button className="px-5 py-1.5 bg-white shadow-sm rounded-lg text-[10px] font-black text-slate-900 uppercase">Weekly</button>
-               <button className="px-5 py-1.5 rounded-lg text-[10px] font-black text-slate-400 uppercase hover:text-slate-600 transition-colors">Monthly</button>
+              <button className="px-5 py-1.5 bg-white shadow-sm rounded-lg text-[10px] font-black text-slate-900 uppercase">Weekly</button>
+              <button className="px-5 py-1.5 rounded-lg text-[10px] font-black text-slate-400 uppercase hover:text-slate-600 transition-colors">Monthly</button>
             </div>
           </div>
           <div className="h-[340px]">
@@ -91,16 +90,16 @@ const DashboardView: React.FC<Props> = ({ projects, tasks, report }) => {
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorIndex" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.12}/>
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.12} />
+                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="5 5" vertical={false} stroke="#f8fafc" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 10, fontWeight: 800}} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 10, fontWeight: 800}} />
-                <Tooltip 
-                  contentStyle={{borderRadius: '20px', border: 'none', boxShadow: '0 20px 40px -10px rgba(0,0,0,0.1)', padding: '15px'}}
-                  itemStyle={{fontWeight: 900, fontSize: '12px', color: '#6366f1'}}
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 800 }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 800 }} />
+                <Tooltip
+                  contentStyle={{ borderRadius: '20px', border: 'none', boxShadow: '0 20px 40px -10px rgba(0,0,0,0.1)', padding: '15px' }}
+                  itemStyle={{ fontWeight: 900, fontSize: '12px', color: '#6366f1' }}
                 />
                 <Area type="monotone" dataKey="views" stroke="#6366f1" strokeWidth={4} fillOpacity={1} fill="url(#colorIndex)" />
               </AreaChart>
@@ -111,12 +110,12 @@ const DashboardView: React.FC<Props> = ({ projects, tasks, report }) => {
         {/* Schedule */}
         <div className="lg:col-span-4 bg-[#0F172A] text-white border border-white/5 rounded-[3rem] p-10 shadow-2xl flex flex-col relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
-             <Calendar size={280} />
+            <Calendar size={280} />
           </div>
           <div className="flex items-center justify-between mb-8 relative z-10">
             <h3 className="text-xl font-black tracking-tight">Timeline</h3>
             <div className="w-9 h-9 bg-white/5 rounded-xl flex items-center justify-center text-indigo-400 border border-white/10 hover:bg-indigo-600 hover:text-white transition-all cursor-pointer">
-               <Activity size={18} />
+              <Activity size={18} />
             </div>
           </div>
           <div className="space-y-4 flex-1 relative z-10">
@@ -140,7 +139,7 @@ const DashboardView: React.FC<Props> = ({ projects, tasks, report }) => {
       {/* Summary Section */}
       <div className="bg-slate-900 rounded-[3.5rem] p-12 text-white relative overflow-hidden shadow-2xl border border-white/5 group">
         <div className="absolute top-0 left-0 p-12 opacity-[0.02] pointer-events-none group-hover:rotate-6 transition-transform duration-1000">
-           <AlertCircle size={300} />
+          <AlertCircle size={300} />
         </div>
         <div className="relative z-10 flex flex-col lg:flex-row gap-12 items-center">
           <div className="flex-1 space-y-8 text-center lg:text-left">
@@ -154,16 +153,16 @@ const DashboardView: React.FC<Props> = ({ projects, tasks, report }) => {
               </div>
             </div>
             <p className="text-slate-300 font-bold leading-relaxed text-2xl lg:text-3xl max-w-4xl tracking-tight">
-              {report?.summary || MOCK_GAP_REPORT.summary}
+              {report?.summary || "暂无最新诊断报告"}
             </p>
           </div>
           <div className="w-full lg:w-72 space-y-4 shrink-0">
-             <button className="w-full bg-white text-slate-900 py-5 rounded-2xl font-black shadow-xl hover:bg-slate-50 transition-all flex items-center justify-center gap-2 text-sm uppercase tracking-widest">
-                <Search size={18} /> Rescan
-             </button>
-             <button className="w-full bg-indigo-600 text-white py-5 rounded-2xl font-black shadow-xl hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 text-sm uppercase tracking-widest">
-                <Zap size={18} /> Auto Fix
-             </button>
+            <button className="w-full bg-white text-slate-900 py-5 rounded-2xl font-black shadow-xl hover:bg-slate-50 transition-all flex items-center justify-center gap-2 text-sm uppercase tracking-widest">
+              <Search size={18} /> Rescan
+            </button>
+            <button className="w-full bg-indigo-600 text-white py-5 rounded-2xl font-black shadow-xl hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 text-sm uppercase tracking-widest">
+              <Zap size={18} /> Auto Fix
+            </button>
           </div>
         </div>
       </div>

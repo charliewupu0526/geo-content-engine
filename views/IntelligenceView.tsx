@@ -21,17 +21,19 @@ import {
   Cpu,
   BarChart4,
   LayoutList,
-  AlertCircle
+  AlertCircle,
+  Globe
 } from 'lucide-react';
-import { analyzeCompanyWebsite, generateCompanyProfile, generateGapReport, checkApiHealth } from '../services/geminiService';
+import { analyzeCompanyWebsite, generateCompanyProfile, generateGapReport, checkApiHealth, discoverCompanyCompetitors, discoverHiddenCompetitors } from '../services/geminiService';
 
 interface Props {
   activeProject: Project | null;
   onNext: () => void;
   onBack: () => void;
+  onCompetitorsDiscovered: (competitors: any[]) => void;
 }
 
-const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) => {
+const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack, onCompetitorsDiscovered }) => {
   const [subStep, setSubStep] = useState<'check' | 'results'>('check');
   const [isScanning, setIsScanning] = useState(false);
   const [profileText, setProfileText] = useState('');
@@ -39,6 +41,14 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
   const [scanProgress, setScanProgress] = useState('');
   const [apiStatus, setApiStatus] = useState<'checking' | 'online' | 'offline'>('checking');
   const [analysisResult, setAnalysisResult] = useState<any>(null);
+  const [dataSource, setDataSource] = useState<string | null>(null);
+  const [dataSourceNote, setDataSourceNote] = useState<string | null>(null);
+
+  // New State for Discovery
+  const [niche, setNiche] = useState(activeProject?.name || '');
+  const [discoveredCompetitors, setDiscoveredCompetitors] = useState<any[]>([]);
+  const [hiddenCompetitors, setHiddenCompetitors] = useState<any[]>([]);
+  const [isHiddenScanning, setIsHiddenScanning] = useState(false);
 
   // 检查 API 状态
   useEffect(() => {
@@ -57,44 +67,55 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
         setIsScanning(true);
 
         try {
-          // 先爬取网站内容
+          // Priority: use the user-edited landing page from profile first, then fallback to domain
+          const landingPage = activeProject.companyProfile?.landingPage?.trim();
+          const domain = (activeProject.domain || '').trim();
+
+          const targetUrl = landingPage || domain;
+          const safeUrl = targetUrl.startsWith('http') ? targetUrl : `https://${targetUrl}`;
+
+          console.log(`[IntelligenceView] useEffect scan for: ${safeUrl} (Source: ${landingPage ? 'Landing Page' : 'Domain'})`);
+
+          // 调用后端 analyze-company API，已包含爬虫 + AI 分析
           const analysis = await analyzeCompanyWebsite(
-            `https://${activeProject.domain}`,
+            safeUrl,
             activeProject.name
-          );
+          ) as any;
 
-          if (analysis) {
-            // 用 AI 生成画像
-            const profile = await generateCompanyProfile(
-              activeProject.name,
-              activeProject.domain,
-              analysis
-            );
+          if (analysis && analysis.company_profile) {
+            // 后端直接返回 company_profile，可能为字符串或JSON对象
+            let profileContent = analysis.company_profile;
 
-            if (profile && profile.profile) {
-              // profile.profile 可能是对象或字符串
-              const profileData = profile.profile;
-              if (typeof profileData === 'string') {
-                setProfileText(profileData);
-              } else if (profileData.profile_text) {
-                setProfileText(profileData.profile_text);
-              } else {
-                // 如果是其他结构，格式化显示
-                setProfileText(JSON.stringify(profileData, null, 2));
-              }
-              setAnalysisResult(analysis);
-              setScanProgress('AI 画像生成完成');
-            } else {
-              // 使用默认模板
-              setProfileText(getDefaultProfileTemplate(activeProject));
+            // 如果是对象（来自 Perplexity Fallback），则格式化为字符串
+            if (typeof profileContent === 'object' && profileContent !== null) {
+              const p = profileContent as any;
+              profileContent = `【企业分析报告】\n\n` +
+                `公司名称: ${p.company_name || '未知'}\n` +
+                `所属行业: ${p.industry || '未知'}\n\n` +
+                `核心产品/服务:\n${Array.isArray(p.products_services) ? p.products_services.map((s: string) => `- ${s}`).join('\n') : p.products_services}\n\n` +
+                `目标受众:\n${p.target_audience || '未知'}\n\n` +
+                `独特卖点 (USP):\n${Array.isArray(p.unique_selling_points) ? p.unique_selling_points.map((s: string) => `- ${s}`).join('\n') : p.unique_selling_points}\n\n` +
+                `核心功能:\n${Array.isArray(p.key_features) ? p.key_features.map((s: string) => `- ${s}`).join('\n') : p.key_features}`;
             }
+
+            setProfileText(profileContent);
+            setAnalysisResult(analysis);
+            setDataSource(analysis.data_source || null);
+            setDataSourceNote(analysis.note || null);
+            setScanProgress('AI 画像生成完成');
+          } else if (analysis && analysis.error) {
+            // API 返回错误
+            setScanError(`分析失败: ${analysis.error}`);
+            setProfileText(`⚠️ 网站分析失败\n\n错误: ${analysis.error}\n\n请检查域名是否正确，或稍后重试。`);
           } else {
-            setProfileText(getDefaultProfileTemplate(activeProject));
+            // 无数据返回
+            setScanError('无法获取企业信息');
+            setProfileText('⚠️ 无法获取企业信息，请检查域名配置或网络连接。');
           }
         } catch (error) {
           console.error('Failed to generate profile:', error);
-          setScanError('AI 生成失败，使用默认模板');
-          setProfileText(getDefaultProfileTemplate(activeProject));
+          setScanError('AI 分析请求失败');
+          setProfileText('⚠️ AI 分析请求失败，请稍后重试。');
         } finally {
           setIsScanning(false);
           setScanProgress('');
@@ -103,41 +124,10 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
 
       generateInitialProfile();
     } else if (activeProject && apiStatus === 'offline') {
-      // API 离线时使用默认模板
-      setProfileText(getDefaultProfileTemplate(activeProject));
+      // API 离线时显示提示
+      setProfileText('⚠️ API 服务离线，无法进行 AI 分析。请检查后端服务状态。');
     }
   }, [activeProject, apiStatus]);
-
-  // 默认画像模板
-  const getDefaultProfileTemplate = (project: Project) => `[深度企业画像与 GEO 战略对齐报告]
-
-1. 品牌核心定位 (Brand Positioning)
-- 品牌名称：${project.name}
-- 官方域名：${project.domain}
-- 核心愿景：致力于通过 AI 技术解决 ${project.name} 领域的内容生产与流量分发痛点。
-- 品牌语调：专业、前瞻、可靠（适合金融/技术类 AI 模型抓取）。
-
-2. 核心产品/服务矩阵 (Product Matrix)
-- 主营业务：自动化 GEO 优化流水线、内容实体建模。
-- 解决痛点：解决企业在 Perplexity、SearchGPT 等 AI 搜索平台中缺失品牌引用的问题。
-- 核心竞争力：拥有行业领先的内容结构化算法，能将非结构化文案转化为 AI 易读的 Knowledge Graph。
-
-3. 受众群体与搜索场景 (Audience & Scenarios)
-- 目标人群：数字营销主管 (CMO)、SaaS 创始人、SEO 专家。
-- 关键搜索意图：
-  - 信息型："什么是 GEO 优化？"
-  - 对比型："GEO vs SEO 哪个更有效？"
-  - 决策型："最适合 2025 年的内容引擎工具"。
-
-4. 行业实体关联 (Entity Graph)
-- 核心实体关键词：#GenerativeAI #SearchEngineOptimization #KnowledgeGraph #ContentStrategy
-- 关联权威源：Google AI Blog, Perplexity Developers, OpenAI Documentation.
-
-5. GEO 策略偏好 (Strategy Markers)
-- 结构化偏好：倾向于使用 Markdown 表格、FAQ 组件和专家引文 (E-E-A-T)。
-- 引用权重建议：加强关于"技术白皮书"和"数据调研报告"的内容产出，这是当前赛道高引用的主要因素。
-
-⚠️ 注意：当前使用离线模板。请确保 API 配置正确以获取 AI 实时分析。`;
 
 
   const handleStartScan = async () => {
@@ -148,12 +138,36 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
     setScanProgress('正在连接 AI 引擎...');
 
     try {
+      // Step 0: Intelligent Discovery (New)
+      if (niche) {
+        setScanProgress(`正在扫描 "${niche}" 领域的竞争格局 (3步验证中: 候选发现→引用验证→评分过滤)...`);
+        const competitors = await discoverCompanyCompetitors(
+          niche,
+          activeProject.name,
+          activeProject.domain
+        );
+        if (competitors && Array.isArray(competitors)) {
+          setDiscoveredCompetitors(competitors);
+          onCompetitorsDiscovered(competitors); // Pass to parent
+        }
+      }
+
       // Step 1: Analyze company website using real crawler
       setScanProgress('正在爬取网站内容...');
+
+      // Priority: use the user-edited landing page from profile first, then fallback to domain
+      const landingPage = activeProject.companyProfile?.landingPage?.trim();
+      const domain = (activeProject.domain || '').trim();
+
+      const targetUrl = landingPage || domain;
+      const safeUrl = targetUrl.startsWith('http') ? targetUrl : `https://${targetUrl}`;
+
+      console.log(`[IntelligenceView] Starting scan for: ${safeUrl} (Source: ${landingPage ? 'Landing Page' : 'Domain'})`);
+
       const analysis = await analyzeCompanyWebsite(
-        `https://${activeProject.domain}`,
+        safeUrl,
         activeProject.name
-      );
+      ) as any;
 
       // 检查 API 返回的错误
       if (analysis && (analysis.error || analysis.success === false)) {
@@ -166,19 +180,21 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
           setScanError('OpenAI API Key 无效。请检查 Vercel 环境变量配置。');
         }
 
-        setSubStep('results');
-        setScanProgress('');
-        return;
+        // Don't return early, show what we have (e.g. competitors)
       }
 
       if (analysis) {
+        // Capture data source info
+        setDataSource(analysis.data_source || null);
+        setDataSourceNote(analysis.note || null);
+
         setScanProgress('正在生成企业画像...');
         // Step 2: Generate profile using AI
         const profile = await generateCompanyProfile(
           activeProject.name,
           activeProject.domain,
           analysis
-        );
+        ) as any;
 
         if (profile && profile.profile) {
           setProfileText(profile.profile);
@@ -188,8 +204,7 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
         setScanProgress('分析完成!');
       } else {
         // Network failure or complete crash
-        setScanError('无法连接到分析服务，请检查网络');
-        setSubStep('results');
+        if (!scanError) setScanError('无法连接到分析服务，请检查网络');
       }
 
       setSubStep('results');
@@ -202,32 +217,61 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
     }
   };
 
-  const competitors = [
-    { name: 'HubSpot (CRM)', score: 94, citation: '45%' },
-    { name: 'Pipedrive Insider', score: 89, citation: '22%' },
-    { name: 'Monday.com Blog', score: 82, citation: '18%' },
-  ];
+  const handleDiscoverHiddenCompetitors = async () => {
+    if (!analysisResult || !analysisResult.company_profile) return;
 
-  const insights = [
+    setIsHiddenScanning(true);
+    try {
+      const results = await discoverHiddenCompetitors(analysisResult.company_profile);
+      if (results && Array.isArray(results)) {
+        setHiddenCompetitors(results);
+      }
+    } catch (e) {
+      console.error("Hidden competitor discovery failed", e);
+    } finally {
+      setIsHiddenScanning(false);
+    }
+  };
+
+  // Display Logic: Use real discovered competitors only (no mock fallback)
+  const displayCompetitors = discoveredCompetitors.length > 0
+    ? discoveredCompetitors.map((c: any) => ({
+      name: c.name,
+      score: c.ai_citation_score || c.score || '—',
+      citation: c.data_source === 'ai_citation_validated'
+        ? `AI引用率 ${c.ai_mention_rate || 0}%`
+        : c.data_source === 'perplexity_search' ? '真实数据' : c.strengths ? 'AI 评估' : '—',
+      url: c.url,
+      strengths: c.strengths,
+      products: c.products,
+      data_source: c.data_source,
+      ai_citation_score: c.ai_citation_score,
+      ai_mention_rate: c.ai_mention_rate,
+      validation_queries: c.validation_queries
+    }))
+    : []; // Empty array - no mock data
+
+  // Dynamic insights based on discovered competitors (no hardcoded data)
+  const insights = discoveredCompetitors.length > 0 ? [
     {
       title: '内容结构化策略',
       icon: FileSearch,
-      content: '竞品大量采用 Markdown 表格展示参数，FAQ 模块高度对齐 Schema.org，平均回答长度为 180 字符。',
-      tag: '结构化密度: 极高'
+      content: `发现 ${discoveredCompetitors.length} 个核心竞品: ${discoveredCompetitors.slice(0, 3).map((c: any) => c.name).join('、')}。建议分析其内容结构和关键词策略。`,
+      tag: `竞品数量: ${discoveredCompetitors.length}`
     },
     {
       title: '实体关键词布局',
       icon: Cpu,
-      content: '头部对手在“自动化”与“AI 协作”实体之间建立了强关联，其内容中行业术语的 LSI 覆盖率高达 92%。',
-      tag: '语义权重: 核心'
+      content: discoveredCompetitors[0]?.strengths || '正在分析竞品核心优势...',
+      tag: '语义权重: 分析中'
     },
     {
       title: '权威引用分析',
       icon: ShieldCheck,
-      content: '被频繁引用的主要原因是其引用了 2024 年 Q3 的 Gartner 报告。AI 搜索引擎偏好包含特定日期和百分比的内容。',
-      tag: '信任标记: 数据驱动'
+      content: discoveredCompetitors[1]?.strengths || '正在分析竞品引用权威来源...',
+      tag: '信任标记: 分析中'
     }
-  ];
+  ] : [];
 
   return (
     <div className="flex flex-col h-full animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -297,6 +341,67 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
                 />
               </div>
 
+              {/* Data Source Indicator */}
+              {dataSource && (
+                <div className={`mt-4 p-4 rounded-2xl border flex items-start gap-3 ${dataSource === 'website_scrape'
+                  ? 'bg-emerald-50 border-emerald-200'
+                  : dataSource === 'perplexity_search'
+                    ? 'bg-amber-50 border-amber-200'
+                    : 'bg-red-50 border-red-200'
+                  }`}>
+                  <div className={`p-1.5 rounded-lg ${dataSource === 'website_scrape'
+                    ? 'bg-emerald-100 text-emerald-600'
+                    : dataSource === 'perplexity_search'
+                      ? 'bg-amber-100 text-amber-600'
+                      : 'bg-red-100 text-red-600'
+                    }`}>
+                    {dataSource === 'website_scrape' ? <CheckSquare size={16} /> : dataSource === 'perplexity_search' ? <Search size={16} /> : <AlertCircle size={16} />}
+                  </div>
+                  <div className="flex-1">
+                    <span className={`text-xs font-black uppercase tracking-wider ${dataSource === 'website_scrape'
+                      ? 'text-emerald-700'
+                      : dataSource === 'perplexity_search'
+                        ? 'text-amber-700'
+                        : 'text-red-700'
+                      }`}>
+                      {dataSource === 'website_scrape'
+                        ? '✅ 数据来源: 官网爬取'
+                        : dataSource === 'perplexity_search'
+                          ? '🔍 数据来源: Perplexity AI 搜索'
+                          : '⚠️ 数据来源: AI 自动生成（无真实数据）'}
+                    </span>
+                    {dataSourceNote && (
+                      <p className="text-xs mt-1 opacity-80">{dataSourceNote}</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Discovery Input (New) */}
+              <div className="mt-8 mb-4 p-6 bg-indigo-50/50 border border-indigo-100 rounded-3xl">
+                <h4 className="flex items-center gap-2 font-bold text-indigo-900 mb-3">
+                  <Globe size={18} className="text-indigo-600" />
+                  智能侦察配置
+                </h4>
+                <div className="flex gap-4 items-center">
+                  <div className="flex-1">
+                    <label className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2 block">核心业务领域 (Niche)</label>
+                    <input
+                      type="text"
+                      value={niche}
+                      onChange={(e) => setNiche(e.target.value)}
+                      className="w-full px-4 py-3 bg-white border border-indigo-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium text-slate-700"
+                      placeholder="例如: CRM System, AI Marketing Tools..."
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs text-indigo-400 mt-6">
+                      系统将使用 Perplexity AI 实时搜索该领域，挖掘 Top 5-8 个竞争对手。
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               <div className="mt-10 flex justify-between items-center">
                 <button
                   onClick={onBack}
@@ -347,31 +452,70 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 {/* 竞品分析 */}
                 <section className="space-y-6">
-                  <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-2">
-                    <TrendingUp size={14} /> 核心竞品引用图谱
-                  </h4>
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-2">
+                      <TrendingUp size={14} /> 核心竞品引用图谱
+                    </h4>
+                    <button
+                      onClick={handleDiscoverHiddenCompetitors}
+                      disabled={isHiddenScanning || hiddenCompetitors.length > 0}
+                      className="text-xs bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-lg font-bold hover:bg-indigo-100 transition-colors disabled:opacity-50 flex items-center gap-1"
+                    >
+                      {isHiddenScanning ? <Loader2 size={12} className="animate-spin" /> : <FileSearch size={12} />}
+                      {isHiddenScanning ? '挖掘中...' : hiddenCompetitors.length > 0 ? '已挖掘隐形竞品' : '挖掘隐形竞品'}
+                    </button>
+                  </div>
+
                   <div className="space-y-4">
-                    {competitors.map((comp, i) => (
+                    {displayCompetitors.map((comp, i) => (
                       <div key={i} className="flex items-center justify-between p-6 bg-slate-50 border border-slate-100 rounded-[2rem] hover:border-indigo-300 transition-all hover:shadow-lg group">
                         <div className="flex items-center gap-5">
                           <span className="text-sm font-black text-indigo-600 bg-white w-10 h-10 rounded-xl flex items-center justify-center shadow-sm border border-indigo-100">{i + 1}</span>
                           <div>
                             <span className="font-black text-slate-800 text-lg">{comp.name}</span>
-                            <div className="text-[10px] text-slate-400 font-bold uppercase mt-0.5 tracking-widest">Industry Leader</div>
+                            <div className="text-[10px] text-slate-400 font-bold uppercase mt-0.5 tracking-widest">
+                              {comp.data_source === 'ai_citation_validated' ? '✅ AI 引用验证' : 'Industry Leader'}
+                            </div>
                           </div>
                         </div>
                         <div className="flex gap-10">
                           <div className="text-right">
-                            <div className="text-[10px] text-slate-400 font-black uppercase mb-1">内容契合度</div>
-                            <div className="text-lg font-black text-slate-900">{comp.score}%</div>
+                            <div className="text-[10px] text-slate-400 font-black uppercase mb-1">AI 引用评分</div>
+                            <div className={`text-lg font-black ${(comp.ai_citation_score || comp.score) >= 70 ? 'text-emerald-600' : (comp.ai_citation_score || comp.score) >= 50 ? 'text-amber-600' : 'text-slate-900'}`}>{comp.score}%</div>
                           </div>
                           <div className="text-right border-l border-slate-200 pl-10">
-                            <div className="text-[10px] text-slate-400 font-black uppercase mb-1">AI 引用占比</div>
+                            <div className="text-[10px] text-slate-400 font-black uppercase mb-1">AI 提及率</div>
                             <div className="text-lg font-black text-indigo-600">{comp.citation}</div>
                           </div>
                         </div>
                       </div>
                     ))}
+
+                    {hiddenCompetitors.length > 0 && (
+                      <div className="mt-6 pt-6 border-t border-slate-100">
+                        <h5 className="text-xs font-bold text-slate-500 mb-4 flex items-center gap-2">
+                          <ShieldCheck size={14} />
+                          发现潜在隐形竞品 (Hidden Competitors)
+                        </h5>
+                        <div className="space-y-3">
+                          {hiddenCompetitors.map((comp, i) => (
+                            <div key={`hidden-${i}`} className="p-4 bg-amber-50/50 border border-amber-100 rounded-2xl flex items-start gap-3">
+                              <div className="mt-1 p-1 bg-amber-100 text-amber-600 rounded-full">
+                                <AlertCircle size={12} />
+                              </div>
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <span className="font-bold text-slate-800">{comp.name}</span>
+                                  <span className="text-[10px] px-2 py-0.5 bg-white border border-amber-200 text-amber-600 rounded-full">潜在威胁</span>
+                                </div>
+                                <p className="text-xs text-slate-600 mt-1">{comp.reason || comp.strengths}</p>
+                                {comp.url_guess && <div className="text-[10px] text-slate-400 mt-1 truncate">{comp.url_guess}</div>}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </section>
 
@@ -420,7 +564,7 @@ const IntelligenceView: React.FC<Props> = ({ activeProject, onNext, onBack }) =>
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 };
 
